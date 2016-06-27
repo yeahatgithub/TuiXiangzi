@@ -21,6 +21,7 @@
             android:name=".GameIntroActivity"
             android:label="@string/game_intro_title" />
         <activity android:name=".XuanGuanQiaActivity"></activity>
+        <activity android:name=".GameActivity"/>
     </application>
 
 </manifest>

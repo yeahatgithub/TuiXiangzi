@@ -1,6 +1,7 @@
 package yescorp.com.tuixiangzi;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 public class XuanGuanQiaActivity extends Activity {
+
+    public static final String GUAN_QIA = "GuanQia";
 
     public final  static String [] GUANQIA_LIST = {"第1关", "第2关", "第3关",
             "第4关", "第5关", "第6关",
@@ -43,7 +46,10 @@ public class XuanGuanQiaActivity extends Activity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long l) {
             int gq = itemIndex + 1;
-            Toast.makeText(XuanGuanQiaActivity.this, "选中了第" + gq + "关", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(XuanGuanQiaActivity.this, "选中了第" + gq + "关", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(XuanGuanQiaActivity.this, GameActivity.class);
+            intent.putExtra(GUAN_QIA, gq);
+            startActivity(intent);
         }
     }
 }

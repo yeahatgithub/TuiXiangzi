@@ -9,13 +9,17 @@ import android.os.Bundle;
  */
 public class GameActivity extends Activity {
 
-    private int mGuanQia;
+    private int mLevel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        mGuanQia = intent.getIntExtra(XuanGuanQiaActivity.GUAN_QIA, 1);
-        setContentView(new GameView(this));
+        mLevel = intent.getIntExtra(XuanGuanQiaActivity.GUAN_QIA, 1);
+        setContentView(new GameView(this, mLevel));
+    }
+
+    public int getLevel() {
+        return mLevel;
     }
 }

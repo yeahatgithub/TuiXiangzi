@@ -1,6 +1,7 @@
 package yescorp.com.tuixiangzi;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,49 +13,107 @@ import android.view.View;
  * Created by 612226 on 2016/6/27.
  */
 public class GameView extends View {
-    private static final int BOARD_COLUMN_NUM = 12;
-    public static final int BOX = 1;
-    public static final int FLAG = 2;
-    public static final int MAN = 3;
-    public static final int WALL = 4;
 
-    //TODO: 定义一个12x12的矩阵，用于存储推箱子游戏局面 -- 定义一个游戏局面类GameInfo
-    //每当箱子或搬运工移动，就修改游戏局面；
-    //当箱子全部到达目的地，就判别得出通过游戏关卡。
-
-    private GameActivity mContext;
+    private GameActivity mGameActivity;
     private float mColumnWidth;
     private float mRowHeight;
     private Bitmap mWallBitmap;
     private Bitmap mManBitmap;
     private Bitmap mBoxBitmap;
     private Bitmap mFlagBitmap;
+    private Bitmap mUpBitmap;
+    private Bitmap mDownBitmap;
+    private Bitmap mRightBitmap;
+    private Bitmap mLeftBitmap;
+    private GameData mGameData;
+    private int mLevel;
+    private int TOP_LEFT_X = 0;
+    private int TOP_LEFT_Y = 40;
 
-    public GameView(Context context) {
+    public GameView(Context context, int level) {
         super(context);
-        mContext = (GameActivity) context;
+        mGameActivity = (GameActivity) context;
+        mLevel = level;
         setFocusable(true);
         setFocusableInTouchMode(true);
-        mBoxBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.box_48x48);
-        mManBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.eggman_48x48);
-        mFlagBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.flag_48x48);
-        mWallBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wall_48x48);
+        Resources res = getResources();
+        mBoxBitmap = BitmapFactory.decodeResource(res, R.drawable.box_48x48);
+        mManBitmap = BitmapFactory.decodeResource(res, R.drawable.eggman_48x48);
+        mFlagBitmap = BitmapFactory.decodeResource(res, R.drawable.flag_48x48);
+        mWallBitmap = BitmapFactory.decodeResource(res, R.drawable.wall_48x48);
+        mUpBitmap= BitmapFactory.decodeResource(res, R.drawable.up_48x48);
+        mDownBitmap = BitmapFactory.decodeResource(res, R.drawable.down_48x48);
+        mRightBitmap = BitmapFactory.decodeResource(res, R.drawable.right_48x48);
+        mLeftBitmap = BitmapFactory.decodeResource(res, R.drawable.left_48x48);
+        mGameData = new GameData(mLevel);
+
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        mColumnWidth = (float)w / mGameData.getBoardColumnNum();
+        mRowHeight = (float)w / mGameData.getBoardRowNum();
         super.onSizeChanged(w, h, oldw, oldh);
-        mColumnWidth = (float)w / BOARD_COLUMN_NUM;
-        mRowHeight = (float)w / BOARD_COLUMN_NUM;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        //背景色
         Paint background = new Paint();
         background.setColor(getResources().getColor(R.color.board_background));
         canvas.drawRect(0, 0, getWidth(), getHeight(), background);
+        //游戏区域
+        drawGameBoard(canvas);
+        //上下左右方向键
+        drawArrows(canvas);
+    }
 
-        Rect destRect = new Rect(0, 200, (int)mColumnWidth, (int)(200 + mRowHeight));
-        canvas.drawBitmap(mBoxBitmap, null, destRect, null);
+    private void drawArrows(Canvas canvas) {
+        final int ARROW_WIDTH = 72;         //方向键是72x72规格的
+        int boardBottom_y = TOP_LEFT_Y + (int)(mRowHeight * mGameData.getBoardRowNum());
+        int arrowTop_y = boardBottom_y + 8;      //8是游戏区底部与方向键顶部的间隔
+        int upTopLeft_x = (getWidth() - ARROW_WIDTH) / 2;
+        int upTopLeft_y = arrowTop_y;
+        Rect upRect = new Rect(upTopLeft_x, upTopLeft_y, upTopLeft_x + ARROW_WIDTH, upTopLeft_y + ARROW_WIDTH);
+
+        canvas.drawBitmap(mUpBitmap, null, upRect, null);
+        int rightTopLeft_x = upTopLeft_x + ARROW_WIDTH;
+        int rightTopLeft_y = upTopLeft_y + ARROW_WIDTH;
+        Rect rightRect = new Rect(rightTopLeft_x, rightTopLeft_y, rightTopLeft_x + ARROW_WIDTH, rightTopLeft_y + ARROW_WIDTH);
+        canvas.drawBitmap(mRightBitmap, null, rightRect, null);
+        int downTopLeft_x = upTopLeft_x;
+        int downTopLeft_y = rightTopLeft_y + ARROW_WIDTH;
+        Rect downRect = new Rect(downTopLeft_x, downTopLeft_y, downTopLeft_x + ARROW_WIDTH, downTopLeft_y + ARROW_WIDTH);
+        canvas.drawBitmap(mDownBitmap, null, downRect, null);
+        int leftTopLeft_x = upTopLeft_x - ARROW_WIDTH;
+        int leftTopLeft_y = upTopLeft_y + ARROW_WIDTH;
+        Rect leftRect = new Rect(leftTopLeft_x, leftTopLeft_y, leftTopLeft_x + ARROW_WIDTH, leftTopLeft_y + ARROW_WIDTH);
+        canvas.drawBitmap(mLeftBitmap, null, leftRect, null);
+    }
+
+    private void drawGameBoard(Canvas canvas) {
+        for (int r = 0; r < mGameData.getBoardRowNum(); r++ )
+            for (int c = 0; c < mGameData.getBoardColumnNum(); c++){
+                int topleft_x = (int)(TOP_LEFT_X + c * mColumnWidth);
+                int topleft_y = (int)(TOP_LEFT_Y + r * mRowHeight);
+                Rect destRect = new Rect(topleft_x, topleft_y,(int)(topleft_x + mColumnWidth), (int)(topleft_y + mRowHeight));
+                String []gameState = mGameData.getGameState();
+                switch (gameState[r].charAt(c)){
+                    case GameInitialData.BOX:
+                        canvas.drawBitmap(mBoxBitmap, null, destRect, null);
+                        break;
+                    case GameInitialData.FLAG:
+                        canvas.drawBitmap(mFlagBitmap, null, destRect, null);
+                        break;
+                    case GameInitialData.NOTHING:
+                        break;
+                    case GameInitialData.MAN:
+                        canvas.drawBitmap(mManBitmap, null, destRect, null);
+                        break;
+                    case GameInitialData.WALL:
+                        canvas.drawBitmap(mWallBitmap, null, destRect, null);
+                        break;
+                }
+            }
     }
 }

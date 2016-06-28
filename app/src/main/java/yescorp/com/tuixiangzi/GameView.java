@@ -29,6 +29,10 @@ public class GameView extends View {
     private int mLevel;
     private int TOP_LEFT_X = 0;
     private int TOP_LEFT_Y = 40;
+    private Rect mUpArrowRect;
+    private Rect mRightArrowRect;
+    private Rect mDownArrowRect;
+    private Rect mLeftArrowRect;
 
     public GameView(Context context, int level) {
         super(context);
@@ -46,7 +50,10 @@ public class GameView extends View {
         mRightBitmap = BitmapFactory.decodeResource(res, R.drawable.right_48x48);
         mLeftBitmap = BitmapFactory.decodeResource(res, R.drawable.left_48x48);
         mGameData = new GameData(mLevel);
-
+        mUpArrowRect = new Rect();
+        mRightArrowRect = new Rect();
+        mDownArrowRect = new Rect();
+        mLeftArrowRect = new Rect();
     }
 
     @Override
@@ -74,29 +81,32 @@ public class GameView extends View {
         int arrowTop_y = boardBottom_y + 8;      //8是游戏区底部与方向键顶部的间隔
         int upTopLeft_x = (getWidth() - ARROW_WIDTH) / 2;
         int upTopLeft_y = arrowTop_y;
-        Rect upRect = new Rect(upTopLeft_x, upTopLeft_y, upTopLeft_x + ARROW_WIDTH, upTopLeft_y + ARROW_WIDTH);
+        mUpArrowRect.set(upTopLeft_x, upTopLeft_y, upTopLeft_x + ARROW_WIDTH, upTopLeft_y + ARROW_WIDTH);
+        canvas.drawBitmap(mUpBitmap, null, mUpArrowRect, null);
 
-        canvas.drawBitmap(mUpBitmap, null, upRect, null);
         int rightTopLeft_x = upTopLeft_x + ARROW_WIDTH;
         int rightTopLeft_y = upTopLeft_y + ARROW_WIDTH;
-        Rect rightRect = new Rect(rightTopLeft_x, rightTopLeft_y, rightTopLeft_x + ARROW_WIDTH, rightTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(mRightBitmap, null, rightRect, null);
+        mRightArrowRect.set(rightTopLeft_x, rightTopLeft_y, rightTopLeft_x + ARROW_WIDTH, rightTopLeft_y + ARROW_WIDTH);
+        canvas.drawBitmap(mRightBitmap, null, mRightArrowRect, null);
+
         int downTopLeft_x = upTopLeft_x;
         int downTopLeft_y = rightTopLeft_y + ARROW_WIDTH;
-        Rect downRect = new Rect(downTopLeft_x, downTopLeft_y, downTopLeft_x + ARROW_WIDTH, downTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(mDownBitmap, null, downRect, null);
+        mDownArrowRect.set(downTopLeft_x, downTopLeft_y, downTopLeft_x + ARROW_WIDTH, downTopLeft_y + ARROW_WIDTH);
+        canvas.drawBitmap(mDownBitmap, null, mDownArrowRect, null);
+
         int leftTopLeft_x = upTopLeft_x - ARROW_WIDTH;
         int leftTopLeft_y = upTopLeft_y + ARROW_WIDTH;
-        Rect leftRect = new Rect(leftTopLeft_x, leftTopLeft_y, leftTopLeft_x + ARROW_WIDTH, leftTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(mLeftBitmap, null, leftRect, null);
+        mLeftArrowRect.set(leftTopLeft_x, leftTopLeft_y, leftTopLeft_x + ARROW_WIDTH, leftTopLeft_y + ARROW_WIDTH);
+        canvas.drawBitmap(mLeftBitmap, null, mLeftArrowRect, null);
     }
 
     private void drawGameBoard(Canvas canvas) {
+        Rect destRect = new Rect();
         for (int r = 0; r < mGameData.getBoardRowNum(); r++ )
             for (int c = 0; c < mGameData.getBoardColumnNum(); c++){
                 int topleft_x = (int)(TOP_LEFT_X + c * mColumnWidth);
                 int topleft_y = (int)(TOP_LEFT_Y + r * mRowHeight);
-                Rect destRect = new Rect(topleft_x, topleft_y,(int)(topleft_x + mColumnWidth), (int)(topleft_y + mRowHeight));
+                destRect.set(topleft_x, topleft_y,(int)(topleft_x + mColumnWidth), (int)(topleft_y + mRowHeight));
                 String []gameState = mGameData.getGameState();
                 switch (gameState[r].charAt(c)){
                     case GameInitialData.BOX:

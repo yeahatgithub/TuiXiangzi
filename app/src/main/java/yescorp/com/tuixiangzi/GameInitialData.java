@@ -20,8 +20,8 @@ public class GameInitialData {
     public static final char NOTHING = ' ';         //该单元格啥也没有
     public static final char BOX = 'B';             //该单元格放的是箱子
     public static final char FLAG = 'F';            //红旗，表示箱子的目的地
-    public static final int MAN = 'M';              //推箱子的人
-    public static final int WALL = 'W';             //墙
+    public static final char MAN = 'M';              //推箱子的人
+    public static final char WALL = 'W';             //墙
 
     //游戏区域的配置信息
     public static final String COLUMN_NUM_LABEL = "Number_of_Columns";

@@ -136,9 +136,9 @@ public class GameView extends View {
 
         int touch_x = (int)event.getX();
         int touch_y = (int)event.getY();
-        Log.d("GameView", "onTouchEvent()...touch_x=" + touch_x + ", touch_y=" + touch_y);
+//        Log.d("GameView", "onTouchEvent()...touch_x=" + touch_x + ", touch_y=" + touch_y);
         if (mUpArrowRect.contains(touch_x, touch_y)) {
-            Log.d("GameView", "You have pressed the UP arrow.");
+//            Log.d("GameView", "You have pressed the UP arrow.");
             mGameData.goUp();
             invalidate();
         }

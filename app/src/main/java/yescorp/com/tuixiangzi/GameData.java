@@ -42,10 +42,12 @@ public class GameData {
     }
 
     public void goUp() {
-        if (mManPostion.y > 0){
-            mGameState[mManPostion.y].setCharAt(mManPostion.x, ' ');
+        if (mManPostion.y <= 0) return;
+        char upCell = mGameState[mManPostion.y - 1].charAt(mManPostion.x);
+        if (upCell == GameInitialData.NOTHING || upCell == GameInitialData.FLAG){
+            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.NOTHING);  //TODO: 该位置有可能是红旗
             mManPostion.y--;
-            mGameState[mManPostion.y].setCharAt(mManPostion.x, 'M');
+            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.MAN);  //TODO: 该格子有红旗的话，要红旗+搬运工叠加在一起。
         }
     }
 }

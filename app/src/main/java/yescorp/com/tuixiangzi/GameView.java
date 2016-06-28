@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -107,7 +109,7 @@ public class GameView extends View {
                 int topleft_x = (int)(TOP_LEFT_X + c * mColumnWidth);
                 int topleft_y = (int)(TOP_LEFT_Y + r * mRowHeight);
                 destRect.set(topleft_x, topleft_y,(int)(topleft_x + mColumnWidth), (int)(topleft_y + mRowHeight));
-                String []gameState = mGameData.getGameState();
+                StringBuffer []gameState = mGameData.getGameState();
                 switch (gameState[r].charAt(c)){
                     case GameInitialData.BOX:
                         canvas.drawBitmap(mBoxBitmap, null, destRect, null);
@@ -125,5 +127,21 @@ public class GameView extends View {
                         break;
                 }
             }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() != MotionEvent.ACTION_DOWN)
+            return super.onTouchEvent(event);
+
+        int touch_x = (int)event.getX();
+        int touch_y = (int)event.getY();
+        Log.d("GameView", "onTouchEvent()...touch_x=" + touch_x + ", touch_y=" + touch_y);
+        if (mUpArrowRect.contains(touch_x, touch_y)) {
+            Log.d("GameView", "You have pressed the UP arrow.");
+            mGameData.goUp();
+            invalidate();
+        }
+        return true;
     }
 }

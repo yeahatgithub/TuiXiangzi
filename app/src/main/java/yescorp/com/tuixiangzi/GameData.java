@@ -1,6 +1,7 @@
 package yescorp.com.tuixiangzi;
 
 import android.graphics.Point;
+import android.util.Log;
 
 /**
  * Created by 612226 on 2016/6/28.
@@ -50,4 +51,36 @@ public class GameData {
             mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.MAN);  //TODO: 该格子有红旗的话，要红旗+搬运工叠加在一起。
         }
     }
+
+    public void goDown() {
+        if (mManPostion.y >= mInitialData.getBoard_Row_Num() - 1) return;
+        char downCell = mGameState[mManPostion.y + 1].charAt(mManPostion.x);
+        if (downCell == GameInitialData.NOTHING || downCell == GameInitialData.FLAG){
+            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.NOTHING);  //TODO: 该位置有可能是红旗
+            mManPostion.y++;
+            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.MAN);  //TODO: 该格子有红旗的话，要红旗+搬运工叠加在一起。
+        }
+    }
+
+    public void goRight() {
+        if (mManPostion.x >= mInitialData.getBoard_Column_Num() - 1) return;
+        char rightCell = mGameState[mManPostion.y].charAt(mManPostion.x + 1);
+//        Log.d("GameData", "goRight(): rightCell=" + rightCell);
+        if (rightCell == GameInitialData.NOTHING || rightCell == GameInitialData.FLAG){
+            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.NOTHING);
+            mManPostion.x++;
+            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.MAN);
+        }
+    }
+
+    public void goLeft() {
+        if (mManPostion.x <= 0) return;
+        char leftCell = mGameState[mManPostion.y].charAt(mManPostion.x - 1);
+        if (leftCell == GameInitialData.NOTHING || leftCell == GameInitialData.FLAG){
+            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.NOTHING);
+            mManPostion.x--;
+            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.MAN);
+        }
+    }
+
 }

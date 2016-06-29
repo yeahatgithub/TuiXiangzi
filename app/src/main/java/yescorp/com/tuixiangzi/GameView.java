@@ -142,6 +142,20 @@ public class GameView extends View {
             mGameData.goUp();
             invalidate();
         }
+        if (mRightArrowRect.contains(touch_x, touch_y)){
+            mGameData.goRight();
+            invalidate();
+        }
+        if (mDownArrowRect.contains(touch_x, touch_y)){
+//            Log.d("GameView", "You have pressed the DOWN arrow.");
+            mGameData.goDown();
+            invalidate();
+        }
+        if (mLeftArrowRect.contains(touch_x, touch_y)){
+//            Log.d("GameView", "You have pressed the LEFT arrow.");
+            mGameData.goLeft();
+            invalidate();
+        }
         return true;
     }
 }

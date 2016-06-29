@@ -109,6 +109,8 @@ public class GameView extends View {
                 int topleft_x = (int)(TOP_LEFT_X + c * mColumnWidth);
                 int topleft_y = (int)(TOP_LEFT_Y + r * mRowHeight);
                 destRect.set(topleft_x, topleft_y,(int)(topleft_x + mColumnWidth), (int)(topleft_y + mRowHeight));
+                if (mGameData.hasFlag(r, c))
+                    canvas.drawBitmap(mFlagBitmap, null, destRect, null);
                 StringBuffer []gameState = mGameData.getGameState();
                 switch (gameState[r].charAt(c)){
                     case GameInitialData.BOX:

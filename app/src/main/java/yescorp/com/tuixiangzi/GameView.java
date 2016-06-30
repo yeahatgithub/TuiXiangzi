@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
@@ -28,6 +29,7 @@ public class GameView extends View {
     private Bitmap mDownBitmap;
     private Bitmap mRightBitmap;
     private Bitmap mLeftBitmap;
+    private Bitmap mDoneBitmap;
     private GameData mGameData;
     private int mLevel;
     private int TOP_LEFT_X = 0;
@@ -52,6 +54,7 @@ public class GameView extends View {
         mDownBitmap = BitmapFactory.decodeResource(res, R.drawable.down_48x48);
         mRightBitmap = BitmapFactory.decodeResource(res, R.drawable.right_48x48);
         mLeftBitmap = BitmapFactory.decodeResource(res, R.drawable.left_48x48);
+        mDoneBitmap = BitmapFactory.decodeResource(res, R.drawable.done_72x72);
         mGameData = new GameData(mLevel);
         mUpArrowRect = new Rect();
         mRightArrowRect = new Rect();
@@ -76,6 +79,9 @@ public class GameView extends View {
         drawGameBoard(canvas);
         //上下左右方向键
         drawArrows(canvas);
+        //成功过关
+        if (mGameData.isGameOver())
+            drawDoneLabel(canvas);
     }
 
     private void drawArrows(Canvas canvas) {
@@ -126,10 +132,27 @@ public class GameView extends View {
                         canvas.drawBitmap(mManBitmap, null, destRect, null);
                         break;
                     case GameInitialData.WALL:
+                        destRect.set(destRect.left, destRect.top, destRect.right+2, destRect.bottom + 2);  //+2是为了去除墙体之间的缝隙
                         canvas.drawBitmap(mWallBitmap, null, destRect, null);
                         break;
                 }
             }
+    }
+
+    private void drawDoneLabel(Canvas canvas) {
+        int begin_x = TOP_LEFT_X + 120;
+        int begin_y = TOP_LEFT_Y + 120;
+        int end_x = canvas.getWidth() - 120;
+        int end_y = begin_y + (end_x - begin_x);
+        Rect label_rect = new Rect(begin_x, begin_y, end_x, end_y);
+        Paint paint = new Paint();
+        paint.setAlpha(125);
+        canvas.drawBitmap(mDoneBitmap, null, label_rect, paint);
+
+//        Paint paint = new Paint();
+//        paint.setColor(Color.BLACK);
+//        paint.setTextSize(24);
+//        canvas.drawText(getResources().getString(R.string.game_over_label), begin_x, begin_y, paint);
     }
 
     @Override
@@ -137,32 +160,36 @@ public class GameView extends View {
         if (event.getAction() != MotionEvent.ACTION_DOWN)
             return super.onTouchEvent(event);
 
+        if (mGameData.isGameOver()) return true;    //游戏结束啦，玩家不能控制搬运工咯
+
         int touch_x = (int)event.getX();
         int touch_y = (int)event.getY();
 //        Log.d("GameView", "onTouchEvent()...touch_x=" + touch_x + ", touch_y=" + touch_y);
         if (mUpArrowRect.contains(touch_x, touch_y)) {
 //            Log.d("GameView", "You have pressed the UP arrow.");
             mGameData.goUp();
-            invalidate();
+//            invalidate();
         }
         if (mRightArrowRect.contains(touch_x, touch_y)){
             mGameData.goRight();
-            invalidate();
+//            invalidate();
         }
         if (mDownArrowRect.contains(touch_x, touch_y)){
 //            Log.d("GameView", "You have pressed the DOWN arrow.");
             mGameData.goDown();
-            invalidate();
+//            invalidate();
         }
         if (mLeftArrowRect.contains(touch_x, touch_y)){
 //            Log.d("GameView", "You have pressed the LEFT arrow.");
             mGameData.goLeft();
             invalidate();
         }
-        if (mGameData.isGameOver()){
-            //TODO: 插上一名大红旗
-            Toast.makeText(mGameActivity, "成功过关！", Toast.LENGTH_LONG).show();
-        }
+//        if (mGameData.isGameOver()){
+//            //TODO: 插上一名大红旗
+//            Toast.makeText(mGameActivity, "成功过关！", Toast.LENGTH_LONG).show();
+//
+//        }
+        invalidate();
         return true;
     }
 }

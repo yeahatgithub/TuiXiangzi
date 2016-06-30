@@ -7,4 +7,5 @@
     <string name="game_intro_statements">这里显示推箱子游戏的介绍...</string>
     <string name="game_intro_title">推箱子游戏简介</string>
     <string name="xuan_guan_qia">选择关卡</string>
+    <string name="game_over_label">你过关了！</string>
 </resources>

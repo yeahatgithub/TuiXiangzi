@@ -12,8 +12,8 @@ import java.util.ArrayList;
  * Created by 612226 on 2016/6/28.
  */
 public class GameInitialData {
-    private int Board_Column_Num = 12;    //游戏区规格，默认为12x12
-    private int Board_Row_Num = 12;
+//    private int Board_Column_Num = 12;    //游戏区规格，默认为12x12
+//    private int Board_Row_Num = 12;
     private ArrayList<String[]> GameLevels = new ArrayList<>();
 
     //游戏区单元格放了什么
@@ -28,6 +28,15 @@ public class GameInitialData {
     public static final String ROW_NUM_LABEL = "Number_of_Rows";
 
     public static final String [] LEVEL_1 = {
+            "  WWWW ",
+            "  WF W ",
+            "  WB W ",
+            "  WM W ",
+            "  WWWW ",
+            "       ",
+            "       "
+    };
+    public static final String [] LEVEL_2 = {
             "            ",
             "            ",
             "  WWWWWWW   ",
@@ -44,21 +53,22 @@ public class GameInitialData {
 
     public GameInitialData() {
         GameLevels.add(LEVEL_1);
+        GameLevels.add(LEVEL_2);
     }
 
-    public GameInitialData(Context context, String confgFileName) throws IOException {
-        try {
-            InputStreamReader inputReader = null;
-            inputReader = new InputStreamReader(context.getResources().getAssets().open(confgFileName) );
-            BufferedReader bufReader = new BufferedReader(inputReader);
-            readConfig(bufReader);
-        } catch (IOException e) {
-            Toast.makeText(context, "无法打开配置文件，程序不得不退出。", Toast.LENGTH_LONG).show();
-            throw e;
-        }
-    }
+//    public GameInitialData(Context context, String confgFileName) throws IOException {
+//        try {
+//            InputStreamReader inputReader = null;
+//            inputReader = new InputStreamReader(context.getResources().getAssets().open(confgFileName) );
+//            BufferedReader bufReader = new BufferedReader(inputReader);
+//            readConfig(bufReader);
+//        } catch (IOException e) {
+//            Toast.makeText(context, "无法打开配置文件，程序不得不退出。", Toast.LENGTH_LONG).show();
+//            throw e;
+//        }
+//    }
 
-    private void readConfig(BufferedReader bufReader) throws IOException {
+  /*  private void readConfig(BufferedReader bufReader) throws IOException {
             String line = "";
             while ((line = bufReader.readLine()) != null) {
 
@@ -94,15 +104,15 @@ public class GameInitialData {
                     }
                 }
             }
-    }
+    }*/
 
-    public int getBoard_Column_Num() {
-        return Board_Column_Num;
-    }
-
-    public int getBoard_Row_Num() {
-        return Board_Row_Num;
-    }
+//    public int getBoard_Column_Num() {
+//        return Board_Column_Num;
+//    }
+//
+//    public int getBoard_Row_Num() {
+//        return Board_Row_Num;
+//    }
 
     public ArrayList<String[]> getGameLevels() {
         return GameLevels;

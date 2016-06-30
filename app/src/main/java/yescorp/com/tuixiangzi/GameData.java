@@ -11,19 +11,23 @@ import java.util.List;
 public class GameData {
     private static GameInitialData mAllLevelsInitialData = new GameInitialData();           //所有关卡的数据
     private int mSelectedLevel;
+    private int mRowNum;
+    private int mColumnNum;
     private StringBuffer[] mGameState;
     private TCell mManPostion = new TCell();
-    private String[] mSelectedInitialData;    //当前所选的关卡，与mLevel对应
+    private String[] mSelectedInitialData;    //当前所选的关卡，与mSelectedLevel对应
     private List<TCell> mFlagCells = new ArrayList<>();             //记住所有红旗所在的位置
 
     public GameData(int level){
 //        mAllLevelsInitialData = new GameInitialData();
         mSelectedLevel = level;   //level从1开始计数
-        mGameState = new StringBuffer[mAllLevelsInitialData.getBoard_Row_Num()];
         mSelectedInitialData = mAllLevelsInitialData.getGameLevels().get(level - 1);
-        for (int r = 0; r < mAllLevelsInitialData.getBoard_Row_Num(); r++) {
+        mRowNum = mSelectedInitialData.length;
+        mColumnNum = mSelectedInitialData[0].length();
+        mGameState = new StringBuffer[mRowNum];
+        for (int r = 0; r < mRowNum; r++) {
             mGameState[r] = new StringBuffer(mSelectedInitialData[r]);
-            for (int c = 0; c < mAllLevelsInitialData.getBoard_Column_Num(); c++) {
+            for (int c = 0; c < mColumnNum; c++) {
                 if (mSelectedInitialData[r].charAt(c) == GameInitialData.MAN) {
                     mManPostion.set(r, c);
                 }
@@ -40,11 +44,11 @@ public class GameData {
     }
 
     public int getBoardColumnNum(){
-        return mAllLevelsInitialData.getBoard_Column_Num();
+        return mColumnNum;
     }
 
     public int getBoardRowNum(){
-        return mAllLevelsInitialData.getBoard_Row_Num();
+        return mRowNum;
     }
 
     public void goUp() {
@@ -88,7 +92,7 @@ public class GameData {
     }
 
     public void goDown() {
-        if (mManPostion.row >= mAllLevelsInitialData.getBoard_Row_Num() - 1) return;
+        if (mManPostion.row >= mRowNum - 1) return;
         char downCell = mGameState[mManPostion.row + 1].charAt(mManPostion.column);
         if (downCell == GameInitialData.BOX) {
             moveBoxDown(mManPostion.row + 1, mManPostion.column);
@@ -102,12 +106,12 @@ public class GameData {
     }
 
     private void moveBoxDown(int row, int column) {
-        if (row >= mAllLevelsInitialData.getBoard_Row_Num() - 1) return;
+        if (row >= mRowNum - 1) return;
         moveBox(row, column, row + 1, column);
     }
 
     public void goRight() {
-        if (mManPostion.column >= mAllLevelsInitialData.getBoard_Column_Num() - 1) return;
+        if (mManPostion.column >= mColumnNum - 1) return;
         char rightCell = mGameState[mManPostion.row].charAt(mManPostion.column + 1);
         if (rightCell == GameInitialData.BOX) {
             moveBoxRight(mManPostion.row, mManPostion.column + 1);
@@ -122,7 +126,7 @@ public class GameData {
     }
 
     private void moveBoxRight(int row, int column) {
-        if (column >= mAllLevelsInitialData.getBoard_Column_Num() - 1) return;
+        if (column >= mColumnNum - 1) return;
         moveBox(row, column, row, column + 1);
     }
 

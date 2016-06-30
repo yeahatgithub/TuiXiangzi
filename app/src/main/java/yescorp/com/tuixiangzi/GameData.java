@@ -1,28 +1,37 @@
 package yescorp.com.tuixiangzi;
 
-import android.graphics.Point;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by 612226 on 2016/6/28.
  */
 public class GameData {
-    private GameInitialData mAllLevelsInitialData;              //所有关卡的数据
-    private int mLevel;
+    private static GameInitialData mAllLevelsInitialData = new GameInitialData();           //所有关卡的数据
+    private int mSelectedLevel;
     private StringBuffer[] mGameState;
-    private Point mManPostion = new Point();
-    private final String[] mSelectedInitialData;    //当前所选的关卡，与mLevel对应
+    private TCell mManPostion = new TCell();
+    private String[] mSelectedInitialData;    //当前所选的关卡，与mLevel对应
+    private List<TCell> mFlagCells = new ArrayList<>();             //记住所有红旗所在的位置
 
     public GameData(int level){
-        mAllLevelsInitialData = new GameInitialData();
-        mLevel = level;   //level从1开始计数
+//        mAllLevelsInitialData = new GameInitialData();
+        mSelectedLevel = level;   //level从1开始计数
         mGameState = new StringBuffer[mAllLevelsInitialData.getBoard_Row_Num()];
         mSelectedInitialData = mAllLevelsInitialData.getGameLevels().get(level - 1);
         for (int r = 0; r < mAllLevelsInitialData.getBoard_Row_Num(); r++) {
             mGameState[r] = new StringBuffer(mSelectedInitialData[r]);
-            for (int c = 0; c < mAllLevelsInitialData.getBoard_Column_Num(); c++)
-                if (mSelectedInitialData[r].charAt(c) == GameInitialData.MAN){
-                    mManPostion.set(c, r);
+            for (int c = 0; c < mAllLevelsInitialData.getBoard_Column_Num(); c++) {
+                if (mSelectedInitialData[r].charAt(c) == GameInitialData.MAN) {
+                    mManPostion.set(r, c);
                 }
+                if (mSelectedInitialData[r].charAt(c) == GameInitialData.FLAG){
+                    TCell cell = new TCell(r, c);
+                    mFlagCells.add(cell);
+                }
+            }
         }
     }
 
@@ -39,17 +48,17 @@ public class GameData {
     }
 
     public void goUp() {
-        if (mManPostion.y <= 0) return;
-        char upCell = mGameState[mManPostion.y - 1].charAt(mManPostion.x);
+        if (mManPostion.row <= 0) return;
+        char upCell = mGameState[mManPostion.row - 1].charAt(mManPostion.column);
         if (upCell == GameInitialData.BOX) {
-            moveBoxUp(mManPostion.y - 1, mManPostion.x);
-            upCell = mGameState[mManPostion.y - 1].charAt(mManPostion.x);
+            moveBoxUp(mManPostion.row - 1, mManPostion.column);
+            upCell = mGameState[mManPostion.row - 1].charAt(mManPostion.column);
         }
 
         if (upCell == GameInitialData.NOTHING || upCell == GameInitialData.FLAG){
             manGoAway();
-            mManPostion.y--;
-            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.MAN);
+            mManPostion.row--;
+            mGameState[mManPostion.row].setCharAt(mManPostion.column, GameInitialData.MAN);
         }
     }
 
@@ -61,90 +70,94 @@ public class GameData {
     }
 
     private void manGoAway() {
-        restoreOldState(mManPostion.y, mManPostion.x);
+        restoreOldState(mManPostion.row, mManPostion.column);
     }
 
     private void moveBoxUp(int row, int column) {
         if (row <= 0) return;
-        char upCell = mGameState[row - 1].charAt(column);
-        if (upCell  == GameInitialData.NOTHING || upCell == GameInitialData.FLAG){
-            restoreOldState(row, column);
-            mGameState[row - 1].setCharAt(column, GameInitialData.BOX);
+        moveBox(row, column, row - 1, column);
+    }
+
+    //把箱子从(srcRow, srcColumn)移动到(destRow, destColumn)
+    private void moveBox(int srcRow, int srcColumn, int destRow, int destColumn){
+        char cell = mGameState[destRow].charAt(destColumn);
+        if (cell  == GameInitialData.NOTHING || cell == GameInitialData.FLAG){
+            restoreOldState(srcRow, srcColumn);
+            mGameState[destRow].setCharAt(destColumn, GameInitialData.BOX);
         }
     }
 
     public void goDown() {
-        if (mManPostion.y >= mAllLevelsInitialData.getBoard_Row_Num() - 1) return;
-        char downCell = mGameState[mManPostion.y + 1].charAt(mManPostion.x);
+        if (mManPostion.row >= mAllLevelsInitialData.getBoard_Row_Num() - 1) return;
+        char downCell = mGameState[mManPostion.row + 1].charAt(mManPostion.column);
         if (downCell == GameInitialData.BOX) {
-            moveBoxDown(mManPostion.y + 1, mManPostion.x);
-            downCell = mGameState[mManPostion.y + 1].charAt(mManPostion.x);
+            moveBoxDown(mManPostion.row + 1, mManPostion.column);
+            downCell = mGameState[mManPostion.row + 1].charAt(mManPostion.column);
         }
         if (downCell == GameInitialData.NOTHING || downCell == GameInitialData.FLAG){
             manGoAway();
-            mManPostion.y++;
-            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.MAN);
+            mManPostion.row++;
+            mGameState[mManPostion.row].setCharAt(mManPostion.column, GameInitialData.MAN);
         }
     }
 
     private void moveBoxDown(int row, int column) {
         if (row >= mAllLevelsInitialData.getBoard_Row_Num() - 1) return;
-        char downCell = mGameState[row + 1].charAt(column);
-        if (downCell == GameInitialData.NOTHING || downCell == GameInitialData.FLAG){
-            restoreOldState(row, column);
-            mGameState[row + 1].setCharAt(column, GameInitialData.BOX);
-        }
+        moveBox(row, column, row + 1, column);
     }
 
     public void goRight() {
-        if (mManPostion.x >= mAllLevelsInitialData.getBoard_Column_Num() - 1) return;
-        char rightCell = mGameState[mManPostion.y].charAt(mManPostion.x + 1);
+        if (mManPostion.column >= mAllLevelsInitialData.getBoard_Column_Num() - 1) return;
+        char rightCell = mGameState[mManPostion.row].charAt(mManPostion.column + 1);
         if (rightCell == GameInitialData.BOX) {
-            moveBoxRight(mManPostion.y, mManPostion.x + 1);
-            rightCell = mGameState[mManPostion.y].charAt(mManPostion.x + 1);
+            moveBoxRight(mManPostion.row, mManPostion.column + 1);
+            rightCell = mGameState[mManPostion.row].charAt(mManPostion.column + 1);
         }
 //        Log.d("GameData", "goRight(): rightCell=" + rightCell);
         if (rightCell == GameInitialData.NOTHING || rightCell == GameInitialData.FLAG){
             manGoAway();
-            mManPostion.x++;
-            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.MAN);
+            mManPostion.column++;
+            mGameState[mManPostion.row].setCharAt(mManPostion.column, GameInitialData.MAN);
         }
     }
 
     private void moveBoxRight(int row, int column) {
         if (column >= mAllLevelsInitialData.getBoard_Column_Num() - 1) return;
-        char rightCell = mGameState[row].charAt(column + 1);
-        if (rightCell == GameInitialData.NOTHING || rightCell == GameInitialData.FLAG){
-            restoreOldState(row, column);
-            mGameState[row].setCharAt(column + 1, GameInitialData.BOX);
-        }
+        moveBox(row, column, row, column + 1);
     }
 
     public void goLeft() {
-        if (mManPostion.x <= 0) return;
-        char leftCell = mGameState[mManPostion.y].charAt(mManPostion.x - 1);
+        if (mManPostion.column <= 0) return;
+        char leftCell = mGameState[mManPostion.row].charAt(mManPostion.column - 1);
         if (leftCell == GameInitialData.BOX) {
-            moveBoxLeft(mManPostion.y, mManPostion.x - 1);
-            leftCell = mGameState[mManPostion.y].charAt(mManPostion.x - 1);
+            moveBoxLeft(mManPostion.row, mManPostion.column - 1);
+            leftCell = mGameState[mManPostion.row].charAt(mManPostion.column - 1);
         }
         if (leftCell == GameInitialData.NOTHING || leftCell == GameInitialData.FLAG){
             manGoAway();
-            mManPostion.x--;
-            mGameState[mManPostion.y].setCharAt(mManPostion.x, GameInitialData.MAN);
+            mManPostion.column--;
+            mGameState[mManPostion.row].setCharAt(mManPostion.column, GameInitialData.MAN);
         }
     }
 
     private void moveBoxLeft(int row, int column) {
         if (column <= 0) return;
-        char leftCell = mGameState[row].charAt(column - 1);
-        if (leftCell == GameInitialData.FLAG || leftCell == GameInitialData.NOTHING){
-            restoreOldState(row, column);
-            mGameState[row].setCharAt(column - 1, GameInitialData.BOX);
-        }
+        moveBox(row, column, row, column - 1);
     }
 
     //据所选关卡的初始数据处获取单元格(row, column)是否有红旗
     public boolean hasFlag(int row, int column) {
         return  mSelectedInitialData[row].charAt(column) == 'F';
+    }
+
+    //所有箱子到达目的地了么？是的话，返回true, 否则返回false。
+    public boolean isGameOver() {
+        for (int i = 0; i < mFlagCells.size(); i++){
+            TCell cell = mFlagCells.get(i);
+//            Log.d("GameData", "isGameOver(), Flag " + i + "=(" + cell.row + ", " + cell.column + ")");
+            if (mGameState[cell.row].charAt(cell.column) != 'B')
+                return false;
+        }
+        return true;
     }
 }

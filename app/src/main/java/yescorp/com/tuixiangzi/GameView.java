@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 /**
  * Created by 612226 on 2016/6/27.
@@ -157,6 +158,10 @@ public class GameView extends View {
 //            Log.d("GameView", "You have pressed the LEFT arrow.");
             mGameData.goLeft();
             invalidate();
+        }
+        if (mGameData.isGameOver()){
+            //TODO: 插上一名大红旗
+            Toast.makeText(mGameActivity, "成功过关！", Toast.LENGTH_LONG).show();
         }
         return true;
     }

@@ -21,15 +21,18 @@ public class GameView extends View {
     private GameActivity mGameActivity;
     private float mColumnWidth;
     private float mRowHeight;
-    private Bitmap mWallBitmap;
-    private Bitmap mManBitmap;
-    private Bitmap mBoxBitmap;
-    private Bitmap mFlagBitmap;
-    private Bitmap mUpBitmap;
-    private Bitmap mDownBitmap;
-    private Bitmap mRightBitmap;
-    private Bitmap mLeftBitmap;
-    private Bitmap mDoneBitmap;
+//    private Bitmap mWallBitmap;
+//    private Bitmap mManBitmap;
+//    private Bitmap mBoxBitmap;
+//    private Bitmap mFlagBitmap;
+//    private Bitmap mUpBitmap;
+//    private Bitmap mDownBitmap;
+//    private Bitmap mRightBitmap;
+//    private Bitmap mLeftBitmap;
+//    private Bitmap mDoneBitmap;
+//    private Bitmap mBtnNextBitmap;
+//    private Bitmap mBtnExitBitmap;
+//    private Bitmap mBtnResetBitmap;
     private GameData mGameData;
     private int mLevel;
     private int TOP_LEFT_X = 0;
@@ -46,20 +49,39 @@ public class GameView extends View {
         setFocusable(true);
         setFocusableInTouchMode(true);
         Resources res = getResources();
-        mBoxBitmap = BitmapFactory.decodeResource(res, R.drawable.box_48x48);
-        mManBitmap = BitmapFactory.decodeResource(res, R.drawable.eggman_48x48);
-        mFlagBitmap = BitmapFactory.decodeResource(res, R.drawable.flag_48x48);
-        mWallBitmap = BitmapFactory.decodeResource(res, R.drawable.wall_48x48);
-        mUpBitmap= BitmapFactory.decodeResource(res, R.drawable.up_48x48);
-        mDownBitmap = BitmapFactory.decodeResource(res, R.drawable.down_48x48);
-        mRightBitmap = BitmapFactory.decodeResource(res, R.drawable.right_48x48);
-        mLeftBitmap = BitmapFactory.decodeResource(res, R.drawable.left_48x48);
-        mDoneBitmap = BitmapFactory.decodeResource(res, R.drawable.done_72x72);
+        loadBitmaps(res);
         mGameData = new GameData(mLevel);
         mUpArrowRect = new Rect();
         mRightArrowRect = new Rect();
         mDownArrowRect = new Rect();
         mLeftArrowRect = new Rect();
+    }
+
+    private void loadBitmaps(Resources res) {
+        if (GameBitmaps.mBoxBitmap == null)
+            GameBitmaps.mBoxBitmap = BitmapFactory.decodeResource(res, R.drawable.box_48x48);
+        if (GameBitmaps.mManBitmap == null)
+            GameBitmaps.mManBitmap = BitmapFactory.decodeResource(res, R.drawable.eggman_48x48);
+        if (GameBitmaps.mFlagBitmap == null)
+            GameBitmaps.mFlagBitmap = BitmapFactory.decodeResource(res, R.drawable.flag_48x48);
+        if (GameBitmaps.mWallBitmap == null)
+            GameBitmaps.mWallBitmap = BitmapFactory.decodeResource(res, R.drawable.wall_48x48);
+        if (GameBitmaps.mUpBitmap == null)
+            GameBitmaps.mUpBitmap= BitmapFactory.decodeResource(res, R.drawable.up_48x48);
+        if (GameBitmaps.mDownBitmap == null)
+            GameBitmaps.mDownBitmap = BitmapFactory.decodeResource(res, R.drawable.down_48x48);
+        if (GameBitmaps.mRightBitmap == null)
+            GameBitmaps.mRightBitmap = BitmapFactory.decodeResource(res, R.drawable.right_48x48);
+        if (GameBitmaps.mLeftBitmap == null)
+            GameBitmaps.mLeftBitmap = BitmapFactory.decodeResource(res, R.drawable.left_48x48);
+        if (GameBitmaps.mDoneBitmap == null)
+            GameBitmaps.mDoneBitmap = BitmapFactory.decodeResource(res, R.drawable.done_72x72);
+        if (GameBitmaps.mBtnNextBitmap == null)
+            GameBitmaps.mBtnNextBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_next_level);
+        if (GameBitmaps.mBtnResetBitmap == null)
+            GameBitmaps.mBtnResetBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_reset);
+        if (GameBitmaps.mBtnExitBitmap == null)
+            GameBitmaps.mBtnExitBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_exit);
     }
 
     @Override
@@ -82,7 +104,10 @@ public class GameView extends View {
         //成功过关
         if (mGameData.isGameOver())
             drawDoneLabel(canvas);
+
+        drawButtons(canvas);
     }
+
 
     private void drawArrows(Canvas canvas) {
         final int ARROW_WIDTH = 72;         //方向键是72x72规格的
@@ -91,22 +116,22 @@ public class GameView extends View {
         int upTopLeft_x = (getWidth() - ARROW_WIDTH) / 2;
         int upTopLeft_y = arrowTop_y;
         mUpArrowRect.set(upTopLeft_x, upTopLeft_y, upTopLeft_x + ARROW_WIDTH, upTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(mUpBitmap, null, mUpArrowRect, null);
+        canvas.drawBitmap(GameBitmaps.mUpBitmap, null, mUpArrowRect, null);
 
         int rightTopLeft_x = upTopLeft_x + ARROW_WIDTH;
         int rightTopLeft_y = upTopLeft_y + ARROW_WIDTH;
         mRightArrowRect.set(rightTopLeft_x, rightTopLeft_y, rightTopLeft_x + ARROW_WIDTH, rightTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(mRightBitmap, null, mRightArrowRect, null);
+        canvas.drawBitmap(GameBitmaps.mRightBitmap, null, mRightArrowRect, null);
 
         int downTopLeft_x = upTopLeft_x;
         int downTopLeft_y = rightTopLeft_y + ARROW_WIDTH;
         mDownArrowRect.set(downTopLeft_x, downTopLeft_y, downTopLeft_x + ARROW_WIDTH, downTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(mDownBitmap, null, mDownArrowRect, null);
+        canvas.drawBitmap(GameBitmaps.mDownBitmap, null, mDownArrowRect, null);
 
         int leftTopLeft_x = upTopLeft_x - ARROW_WIDTH;
         int leftTopLeft_y = upTopLeft_y + ARROW_WIDTH;
         mLeftArrowRect.set(leftTopLeft_x, leftTopLeft_y, leftTopLeft_x + ARROW_WIDTH, leftTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(mLeftBitmap, null, mLeftArrowRect, null);
+        canvas.drawBitmap(GameBitmaps.mLeftBitmap, null, mLeftArrowRect, null);
     }
 
     private void drawGameBoard(Canvas canvas) {
@@ -117,23 +142,23 @@ public class GameView extends View {
                 int topleft_y = (int)(TOP_LEFT_Y + r * mRowHeight);
                 destRect.set(topleft_x, topleft_y,(int)(topleft_x + mColumnWidth), (int)(topleft_y + mRowHeight));
                 if (mGameData.hasFlag(r, c))
-                    canvas.drawBitmap(mFlagBitmap, null, destRect, null);
+                    canvas.drawBitmap(GameBitmaps.mFlagBitmap, null, destRect, null);
                 StringBuffer []gameState = mGameData.getGameState();
                 switch (gameState[r].charAt(c)){
                     case GameInitialData.BOX:
-                        canvas.drawBitmap(mBoxBitmap, null, destRect, null);
+                        canvas.drawBitmap(GameBitmaps.mBoxBitmap, null, destRect, null);
                         break;
                     case GameInitialData.FLAG:
-                        canvas.drawBitmap(mFlagBitmap, null, destRect, null);
+                        canvas.drawBitmap(GameBitmaps.mFlagBitmap, null, destRect, null);
                         break;
                     case GameInitialData.NOTHING:
                         break;
                     case GameInitialData.MAN:
-                        canvas.drawBitmap(mManBitmap, null, destRect, null);
+                        canvas.drawBitmap(GameBitmaps.mManBitmap, null, destRect, null);
                         break;
                     case GameInitialData.WALL:
                         destRect.set(destRect.left, destRect.top, destRect.right+2, destRect.bottom + 2);  //+2是为了去除墙体之间的缝隙
-                        canvas.drawBitmap(mWallBitmap, null, destRect, null);
+                        canvas.drawBitmap(GameBitmaps.mWallBitmap, null, destRect, null);
                         break;
                 }
             }
@@ -147,12 +172,29 @@ public class GameView extends View {
         Rect label_rect = new Rect(begin_x, begin_y, end_x, end_y);
         Paint paint = new Paint();
         paint.setAlpha(125);
-        canvas.drawBitmap(mDoneBitmap, null, label_rect, paint);
+        canvas.drawBitmap(GameBitmaps.mDoneBitmap, null, label_rect, paint);
+    }
 
-//        Paint paint = new Paint();
-//        paint.setColor(Color.BLACK);
-//        paint.setTextSize(24);
-//        canvas.drawText(getResources().getString(R.string.game_over_label), begin_x, begin_y, paint);
+    private Rect mBtnNextLevel = new Rect();
+    private Rect mBtnReset = new Rect();
+    private Rect mBtnExit = new Rect();
+    private void drawButtons(Canvas canvas) {
+        final int BOTTOM_MARGIN = 20;
+        final int LEFT_MARGIN = 106;
+        final int RIGHT_MARGIN = LEFT_MARGIN;
+        final int BUTTON_INTERVAL = 80;
+        final int BUTTON_WIDTH = 132;    //原始图片的像素是66x26
+        int Button_Height = BUTTON_WIDTH / GameBitmaps.mBtnNextBitmap.getWidth() * GameBitmaps.mBtnNextBitmap.getHeight();
+        int button_y = canvas.getHeight() - BOTTOM_MARGIN - Button_Height;
+        int buttion_1_x = LEFT_MARGIN;
+        mBtnNextLevel.set(buttion_1_x, button_y, buttion_1_x + BUTTON_WIDTH, button_y + Button_Height);
+        canvas.drawBitmap(GameBitmaps.mBtnNextBitmap, null, mBtnNextLevel, null);
+        int button_2_x = buttion_1_x + BUTTON_WIDTH + BUTTON_INTERVAL;
+        mBtnReset.set(button_2_x, button_y, button_2_x + BUTTON_WIDTH, button_y + Button_Height);
+        canvas.drawBitmap(GameBitmaps.mBtnResetBitmap, null, mBtnReset, null);
+        int button_3_x = button_2_x + BUTTON_WIDTH + BUTTON_INTERVAL;
+        mBtnExit.set(button_3_x, button_y, button_3_x + BUTTON_WIDTH, button_y + Button_Height);
+        canvas.drawBitmap(GameBitmaps.mBtnExitBitmap, null, mBtnExit, null);
     }
 
     @Override
@@ -182,13 +224,9 @@ public class GameView extends View {
         if (mLeftArrowRect.contains(touch_x, touch_y)){
 //            Log.d("GameView", "You have pressed the LEFT arrow.");
             mGameData.goLeft();
-            invalidate();
+//            invalidate();
         }
-//        if (mGameData.isGameOver()){
-//            //TODO: 插上一名大红旗
-//            Toast.makeText(mGameActivity, "成功过关！", Toast.LENGTH_LONG).show();
-//
-//        }
+
         invalidate();
         return true;
     }

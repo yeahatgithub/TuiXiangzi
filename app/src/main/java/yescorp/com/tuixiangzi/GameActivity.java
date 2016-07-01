@@ -26,7 +26,13 @@ public class GameActivity extends Activity {
     }
 
     public void goToNextLevel(){
-        mView = new GameView(this, mGameLevel + 1);
-        setContentView(mView);
+        goToLevel(mGameLevel + 1);
+    }
+
+    public void goToLevel(int level) {
+        if (level >= 1 && level <= GameInitialData.GameLevels.size()){
+            mView = new GameView(this, level);
+            setContentView(mView);
+        }
     }
 }

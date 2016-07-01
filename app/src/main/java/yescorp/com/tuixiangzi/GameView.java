@@ -1,6 +1,7 @@
 package yescorp.com.tuixiangzi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -219,6 +220,18 @@ public class GameView extends View {
                 mGameActivity.goToNextLevel();
             else
                 Toast.makeText(mGameActivity, "恭喜！你已经通关了。你好厉害。", Toast.LENGTH_LONG).show();
+        }
+
+        if (mBtnReset.contains(touch_x, touch_y)){
+            mGameActivity.goToLevel(mGameLevel);
+        }
+
+        if (mBtnExit.contains(touch_x, touch_y)){
+            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            startMain.addCategory(Intent.CATEGORY_HOME);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mGameActivity.startActivity(startMain);
+            System.exit(0);
         }
 
         return true;

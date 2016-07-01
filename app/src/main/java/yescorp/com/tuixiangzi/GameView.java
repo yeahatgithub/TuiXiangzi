@@ -2,13 +2,10 @@ package yescorp.com.tuixiangzi;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -21,36 +18,27 @@ public class GameView extends View {
     private GameActivity mGameActivity;
     private float mColumnWidth;
     private float mRowHeight;
-//    private Bitmap mWallBitmap;
-//    private Bitmap mManBitmap;
-//    private Bitmap mBoxBitmap;
-//    private Bitmap mFlagBitmap;
-//    private Bitmap mUpBitmap;
-//    private Bitmap mDownBitmap;
-//    private Bitmap mRightBitmap;
-//    private Bitmap mLeftBitmap;
-//    private Bitmap mDoneBitmap;
-//    private Bitmap mBtnNextBitmap;
-//    private Bitmap mBtnExitBitmap;
-//    private Bitmap mBtnResetBitmap;
     private GameData mGameData;
-    private int mLevel;
+    private int mGameLevel;
     private int TOP_LEFT_X = 0;
     private int TOP_LEFT_Y = 40;
     private Rect mUpArrowRect;
     private Rect mRightArrowRect;
     private Rect mDownArrowRect;
     private Rect mLeftArrowRect;
+    private Rect mBtnNextLevel = new Rect();
+    private Rect mBtnReset = new Rect();
+    private Rect mBtnExit = new Rect();
 
     public GameView(Context context, int level) {
         super(context);
         mGameActivity = (GameActivity) context;
-        mLevel = level;
+        mGameLevel = level;
         setFocusable(true);
         setFocusableInTouchMode(true);
         Resources res = getResources();
         loadBitmaps(res);
-        mGameData = new GameData(mLevel);
+        mGameData = new GameData(mGameLevel);
         mUpArrowRect = new Rect();
         mRightArrowRect = new Rect();
         mDownArrowRect = new Rect();
@@ -175,9 +163,6 @@ public class GameView extends View {
         canvas.drawBitmap(GameBitmaps.mDoneBitmap, null, label_rect, paint);
     }
 
-    private Rect mBtnNextLevel = new Rect();
-    private Rect mBtnReset = new Rect();
-    private Rect mBtnExit = new Rect();
     private void drawButtons(Canvas canvas) {
         final int BOTTOM_MARGIN = 20;
         final int LEFT_MARGIN = 106;
@@ -202,32 +187,40 @@ public class GameView extends View {
         if (event.getAction() != MotionEvent.ACTION_DOWN)
             return super.onTouchEvent(event);
 
-        if (mGameData.isGameOver()) return true;    //游戏结束啦，玩家不能控制搬运工咯
-
-        int touch_x = (int)event.getX();
-        int touch_y = (int)event.getY();
+        int touch_x = (int) event.getX();
+        int touch_y = (int) event.getY();
+        if (!mGameData.isGameOver()) {
 //        Log.d("GameView", "onTouchEvent()...touch_x=" + touch_x + ", touch_y=" + touch_y);
-        if (mUpArrowRect.contains(touch_x, touch_y)) {
+            if (mUpArrowRect.contains(touch_x, touch_y)) {
 //            Log.d("GameView", "You have pressed the UP arrow.");
-            mGameData.goUp();
+                mGameData.goUp();
 //            invalidate();
-        }
-        if (mRightArrowRect.contains(touch_x, touch_y)){
-            mGameData.goRight();
+            }
+            if (mRightArrowRect.contains(touch_x, touch_y)) {
+                mGameData.goRight();
 //            invalidate();
-        }
-        if (mDownArrowRect.contains(touch_x, touch_y)){
+            }
+            if (mDownArrowRect.contains(touch_x, touch_y)) {
 //            Log.d("GameView", "You have pressed the DOWN arrow.");
-            mGameData.goDown();
+                mGameData.goDown();
 //            invalidate();
-        }
-        if (mLeftArrowRect.contains(touch_x, touch_y)){
+            }
+            if (mLeftArrowRect.contains(touch_x, touch_y)) {
 //            Log.d("GameView", "You have pressed the LEFT arrow.");
-            mGameData.goLeft();
+                mGameData.goLeft();
 //            invalidate();
+            }
+
+            invalidate();
         }
 
-        invalidate();
+        if (mBtnNextLevel.contains(touch_x, touch_y)){
+            if (mGameLevel < GameInitialData.GameLevels.size())  //mGameLevel从1开始计数
+                mGameActivity.goToNextLevel();
+            else
+                Toast.makeText(mGameActivity, "恭喜！你已经通关了。你好厉害。", Toast.LENGTH_LONG).show();
+        }
+
         return true;
     }
 }

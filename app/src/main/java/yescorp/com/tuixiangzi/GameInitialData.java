@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class GameInitialData {
 //    private int Board_Column_Num = 12;    //游戏区规格，默认为12x12
 //    private int Board_Row_Num = 12;
-    private ArrayList<String[]> GameLevels = new ArrayList<>();
+    public static ArrayList<String[]> GameLevels = new ArrayList<>();
 
     //游戏区单元格放了什么
     public static final char NOTHING = ' ';         //该单元格啥也没有
@@ -51,7 +51,12 @@ public class GameInitialData {
             "            "
     };
 
-    public GameInitialData() {
+//    public GameInitialData() {
+//        GameLevels.add(LEVEL_1);
+//        GameLevels.add(LEVEL_2);
+//    }
+
+    public static void addInitGameData(){
         GameLevels.add(LEVEL_1);
         GameLevels.add(LEVEL_2);
     }

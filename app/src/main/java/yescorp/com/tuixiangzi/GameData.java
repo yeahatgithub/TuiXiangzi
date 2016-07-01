@@ -9,7 +9,7 @@ import java.util.List;
  * Created by 612226 on 2016/6/28.
  */
 public class GameData {
-    private static GameInitialData mAllLevelsInitialData = new GameInitialData();           //所有关卡的数据
+//    private static GameInitialData mAllLevelsInitialData;         //所有关卡的数据
     private int mSelectedLevel;
     private int mRowNum;
     private int mColumnNum;
@@ -19,9 +19,10 @@ public class GameData {
     private List<TCell> mFlagCells = new ArrayList<>();             //记住所有红旗所在的位置
 
     public GameData(int level){
-//        mAllLevelsInitialData = new GameInitialData();
+        if (GameInitialData.GameLevels.size() == 0)
+            GameInitialData.addInitGameData();
         mSelectedLevel = level;   //level从1开始计数
-        mSelectedInitialData = mAllLevelsInitialData.getGameLevels().get(level - 1);
+        mSelectedInitialData = GameInitialData.GameLevels.get(level - 1);
         mRowNum = mSelectedInitialData.length;
         mColumnNum = mSelectedInitialData[0].length();
         mGameState = new StringBuffer[mRowNum];

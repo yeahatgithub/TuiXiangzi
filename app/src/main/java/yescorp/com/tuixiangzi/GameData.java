@@ -1,7 +1,9 @@
 package yescorp.com.tuixiangzi;
 
+import android.content.res.Resources;
 import android.util.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,24 +17,25 @@ public class GameData {
     private int mColumnNum;
     private StringBuffer[] mGameState;
     private TCell mManPostion = new TCell();
-    private String[] mSelectedInitialData;    //当前所选的关卡，与mSelectedLevel对应
+    private LevelInitialData mSelectedInitialData;    //当前所选的关卡，与mSelectedLevel对应
     private List<TCell> mFlagCells = new ArrayList<>();             //记住所有红旗所在的位置
 
-    public GameData(int level){
+    public GameData(Resources res, int level) throws IOException {
         if (GameInitialData.GameLevels.size() == 0)
-            GameInitialData.addInitGameData();
+            //GameInitialData.addInitGameData();
+            GameInitialData.readInitialData(res, GameInitialData.CONFIG_FILE_NAME);
         mSelectedLevel = level;   //level从1开始计数
         mSelectedInitialData = GameInitialData.GameLevels.get(level - 1);
-        mRowNum = mSelectedInitialData.length;
-        mColumnNum = mSelectedInitialData[0].length();
+        mRowNum = mSelectedInitialData.mRowNum;
+        mColumnNum = mSelectedInitialData.mColumnNum;
         mGameState = new StringBuffer[mRowNum];
         for (int r = 0; r < mRowNum; r++) {
-            mGameState[r] = new StringBuffer(mSelectedInitialData[r]);
+            mGameState[r] = new StringBuffer(mSelectedInitialData.mInitialState[r]);
             for (int c = 0; c < mColumnNum; c++) {
-                if (mSelectedInitialData[r].charAt(c) == GameInitialData.MAN) {
+                if (mSelectedInitialData.mInitialState[r].charAt(c) == GameInitialData.MAN) {
                     mManPostion.set(r, c);
                 }
-                if (mSelectedInitialData[r].charAt(c) == GameInitialData.FLAG){
+                if (mSelectedInitialData.mInitialState[r].charAt(c) == GameInitialData.FLAG){
                     TCell cell = new TCell(r, c);
                     mFlagCells.add(cell);
                 }
@@ -152,7 +155,7 @@ public class GameData {
 
     //据所选关卡的初始数据处获取单元格(row, column)是否有红旗
     public boolean hasFlag(int row, int column) {
-        return  mSelectedInitialData[row].charAt(column) == 'F';
+        return  mSelectedInitialData.mInitialState[row].charAt(column) == 'F';
     }
 
     //所有箱子到达目的地了么？是的话，返回true, 否则返回false。

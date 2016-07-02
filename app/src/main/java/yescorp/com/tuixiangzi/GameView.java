@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 /**
  * Created by 612226 on 2016/6/27.
  */
@@ -35,16 +37,27 @@ public class GameView extends View {
         super(context);
         mGameActivity = (GameActivity) context;
         mGameLevel = level;
-        setFocusable(true);
-        setFocusableInTouchMode(true);
-        Resources res = getResources();
-        loadBitmaps(res);
-        mGameData = new GameData(mGameLevel);
         mUpArrowRect = new Rect();
         mRightArrowRect = new Rect();
         mDownArrowRect = new Rect();
         mLeftArrowRect = new Rect();
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        Resources res = getResources();
+        loadBitmaps(res);
+        try {
+            mGameData = new GameData(res, mGameLevel);
+        } catch (IOException e) {
+            Toast.makeText(mGameActivity, "无法打开或读取配置文件。程序退出。", Toast.LENGTH_LONG).show();
+            System.exit(-1);
+        }
     }
+
+
+//    @Override
+//    protected void onFinishInflate() {
+//        super.onFinishInflate();
+//    }
 
     private void loadBitmaps(Resources res) {
         if (GameBitmaps.mBoxBitmap == null)

@@ -17,7 +17,7 @@ public class GameData {
     private int mColumnNum;
     private StringBuffer[] mGameState;
     private TCell mManPostion = new TCell();
-    private LevelInitialData mSelectedInitialData;    //当前所选的关卡，与mSelectedLevel对应
+    private LevelInitialData mSelectedInitialData;    //当前所选的关卡的初始数据，与mSelectedLevel对应
     private List<TCell> mFlagCells = new ArrayList<>();             //记住所有红旗所在的位置
 
     public GameData(Resources res, int level) throws IOException {
@@ -26,20 +26,53 @@ public class GameData {
             GameInitialData.readInitialData(res, GameInitialData.CONFIG_FILE_NAME);
         mSelectedLevel = level;   //level从1开始计数
         mSelectedInitialData = GameInitialData.GameLevels.get(level - 1);
+        initializeGameState();
+    }
+
+    private void initializeGameState() {
         mRowNum = mSelectedInitialData.mRowNum;
         mColumnNum = mSelectedInitialData.mColumnNum;
-        mGameState = new StringBuffer[mRowNum];
+        if (mRowNum < GameInitialData.DEFAULT_ROW_NUM)
+            mGameState = new StringBuffer[GameInitialData.DEFAULT_ROW_NUM];  //尾部将添加若干空行
+        else
+            mGameState = new StringBuffer[mRowNum];
+
+        StringBuffer leftBlanks = new StringBuffer("");
+        StringBuffer rightBlanks = new StringBuffer("");
+        //游戏区域不足11列，左右两边加上若干空白列，凑足11列
+        if (mColumnNum < GameInitialData.DEFAULT_COLUMN_NUM){
+            int leftBlankCnt = (GameInitialData.DEFAULT_COLUMN_NUM - mColumnNum) / 2;
+            for (int i = 0; i < leftBlankCnt; i++ )
+                leftBlanks.append(" ");
+            for (int i = 0; i < GameInitialData.DEFAULT_COLUMN_NUM - mColumnNum - leftBlankCnt; i++)
+                rightBlanks.append(" ");
+            mColumnNum = GameInitialData.DEFAULT_COLUMN_NUM;
+        }
+
         for (int r = 0; r < mRowNum; r++) {
-            mGameState[r] = new StringBuffer(mSelectedInitialData.mInitialState[r]);
+            mGameState[r] = new StringBuffer(leftBlanks);
+            mGameState[r].append(mSelectedInitialData.mInitialState[r]);
+            mGameState[r].append(rightBlanks);
+            //Log.d("GameData", "initializeGameState(), mGameState[" + r + "].length=" + mGameState[r].length());
             for (int c = 0; c < mColumnNum; c++) {
-                if (mSelectedInitialData.mInitialState[r].charAt(c) == GameInitialData.MAN) {
+                if (mGameState[r].charAt(c) == GameInitialData.MAN) {
                     mManPostion.set(r, c);
                 }
-                if (mSelectedInitialData.mInitialState[r].charAt(c) == GameInitialData.FLAG){
+                if (mGameState[r].charAt(c) == GameInitialData.FLAG){
                     TCell cell = new TCell(r, c);
                     mFlagCells.add(cell);
                 }
             }
+        }
+        //行数不足11行，使得墙体图片看起来偏大，故添加若干空行
+        if (mRowNum < GameInitialData.DEFAULT_ROW_NUM){
+            for (int i = mRowNum; i < GameInitialData.DEFAULT_ROW_NUM; i++) {
+                StringBuffer blankLine = new StringBuffer();
+                for (int c = 0; c < mColumnNum; c++)
+                    blankLine.append(" ");
+                mGameState[i] = blankLine;
+            }
+            mRowNum = GameInitialData.DEFAULT_ROW_NUM;
         }
     }
 
@@ -155,7 +188,7 @@ public class GameData {
 
     //据所选关卡的初始数据处获取单元格(row, column)是否有红旗
     public boolean hasFlag(int row, int column) {
-        return  mSelectedInitialData.mInitialState[row].charAt(column) == 'F';
+        return  mGameState[row].charAt(column) == 'F';
     }
 
     //所有箱子到达目的地了么？是的话，返回true, 否则返回false。

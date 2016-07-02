@@ -15,7 +15,8 @@ import java.util.StringTokenizer;
  * Created by 612226 on 2016/6/28.
  */
 public class GameInitialData {
-
+    public static final int DEFAULT_ROW_NUM = 11;
+    public static final int DEFAULT_COLUMN_NUM = 11;
     public static ArrayList<LevelInitialData> GameLevels = new ArrayList<>();
 
     //游戏区单元格放了什么

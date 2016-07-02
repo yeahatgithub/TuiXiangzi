@@ -80,6 +80,10 @@ public class GameData {
         return mGameState;
     }
 
+    public TCell getmManPostion(){
+        return  mManPostion;
+    }
+
     public int getBoardColumnNum(){
         return mColumnNum;
     }
@@ -188,7 +192,12 @@ public class GameData {
 
     //据所选关卡的初始数据处获取单元格(row, column)是否有红旗
     public boolean hasFlag(int row, int column) {
-        return  mGameState[row].charAt(column) == 'F';
+        for (int i = 0; i < mFlagCells.size(); i++) {
+            TCell cell = mFlagCells.get(i);
+            if (cell.row == row && cell.column == column)
+                return true;
+        }
+        return  false;
     }
 
     //所有箱子到达目的地了么？是的话，返回true, 否则返回false。

@@ -25,10 +25,7 @@ public class GameView extends View {
     private int mGameLevel;
     private int TOP_LEFT_X = 0;
     private int TOP_LEFT_Y = 40;
-    private Rect mUpArrowRect;
-    private Rect mRightArrowRect;
-    private Rect mDownArrowRect;
-    private Rect mLeftArrowRect;
+    private Rect mManRect = new Rect();          //搬运工所在的位置
     private Rect mBtnNextLevel = new Rect();
     private Rect mBtnReset = new Rect();
     private Rect mBtnExit = new Rect();
@@ -37,10 +34,6 @@ public class GameView extends View {
         super(context);
         mGameActivity = (GameActivity) context;
         mGameLevel = level;
-        mUpArrowRect = new Rect();
-        mRightArrowRect = new Rect();
-        mDownArrowRect = new Rect();
-        mLeftArrowRect = new Rect();
         setFocusable(true);
         setFocusableInTouchMode(true);
         Resources res = getResources();
@@ -52,12 +45,6 @@ public class GameView extends View {
             System.exit(-1);
         }
     }
-
-
-//    @Override
-//    protected void onFinishInflate() {
-//        super.onFinishInflate();
-//    }
 
     private void loadBitmaps(Resources res) {
         if (GameBitmaps.mBoxBitmap == null)
@@ -90,7 +77,17 @@ public class GameView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         mColumnWidth = (float)w / mGameData.getBoardColumnNum();
         mRowHeight = (float)w / mGameData.getBoardRowNum();
+        getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);
         super.onSizeChanged(w, h, oldw, oldh);
+    }
+
+
+    private void getManRect(TCell tCell, float rowHeight,float columnWidth ) {
+        int left = (int)(TOP_LEFT_X + tCell.column * columnWidth);
+        int top = (int)(TOP_LEFT_Y + tCell.row * rowHeight);
+        int right = (int)(left + columnWidth);
+        int bottom = (int)(top + rowHeight);
+        mManRect.set(left, top, right, bottom);
     }
 
     @Override
@@ -101,8 +98,7 @@ public class GameView extends View {
         canvas.drawRect(0, 0, getWidth(), getHeight(), background);
         //游戏区域
         drawGameBoard(canvas);
-        //上下左右方向键
-        drawArrows(canvas);
+
         //成功过关
         if (mGameData.isGameOver())
             drawDoneLabel(canvas);
@@ -110,31 +106,6 @@ public class GameView extends View {
         drawButtons(canvas);
     }
 
-
-    private void drawArrows(Canvas canvas) {
-        final int ARROW_WIDTH = 72;         //方向键是72x72规格的
-        int boardBottom_y = TOP_LEFT_Y + (int)(mRowHeight * mGameData.getBoardRowNum());
-        int arrowTop_y = boardBottom_y + 8;      //8是游戏区底部与方向键顶部的间隔
-        int upTopLeft_x = (getWidth() - ARROW_WIDTH) / 2;
-        int upTopLeft_y = arrowTop_y;
-        mUpArrowRect.set(upTopLeft_x, upTopLeft_y, upTopLeft_x + ARROW_WIDTH, upTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(GameBitmaps.mUpBitmap, null, mUpArrowRect, null);
-
-        int rightTopLeft_x = upTopLeft_x + ARROW_WIDTH;
-        int rightTopLeft_y = upTopLeft_y + ARROW_WIDTH;
-        mRightArrowRect.set(rightTopLeft_x, rightTopLeft_y, rightTopLeft_x + ARROW_WIDTH, rightTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(GameBitmaps.mRightBitmap, null, mRightArrowRect, null);
-
-        int downTopLeft_x = upTopLeft_x;
-        int downTopLeft_y = rightTopLeft_y + ARROW_WIDTH;
-        mDownArrowRect.set(downTopLeft_x, downTopLeft_y, downTopLeft_x + ARROW_WIDTH, downTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(GameBitmaps.mDownBitmap, null, mDownArrowRect, null);
-
-        int leftTopLeft_x = upTopLeft_x - ARROW_WIDTH;
-        int leftTopLeft_y = upTopLeft_y + ARROW_WIDTH;
-        mLeftArrowRect.set(leftTopLeft_x, leftTopLeft_y, leftTopLeft_x + ARROW_WIDTH, leftTopLeft_y + ARROW_WIDTH);
-        canvas.drawBitmap(GameBitmaps.mLeftBitmap, null, mLeftArrowRect, null);
-    }
 
     private void drawGameBoard(Canvas canvas) {
         Rect destRect = new Rect();
@@ -205,26 +176,19 @@ public class GameView extends View {
         int touch_y = (int) event.getY();
         if (!mGameData.isGameOver()) {
 //        Log.d("GameView", "onTouchEvent()...touch_x=" + touch_x + ", touch_y=" + touch_y);
-            if (mUpArrowRect.contains(touch_x, touch_y)) {
-//            Log.d("GameView", "You have pressed the UP arrow.");
-                mGameData.goUp();
-//            invalidate();
-            }
-            if (mRightArrowRect.contains(touch_x, touch_y)) {
-                mGameData.goRight();
-//            invalidate();
-            }
-            if (mDownArrowRect.contains(touch_x, touch_y)) {
-//            Log.d("GameView", "You have pressed the DOWN arrow.");
-                mGameData.goDown();
-//            invalidate();
-            }
-            if (mLeftArrowRect.contains(touch_x, touch_y)) {
-//            Log.d("GameView", "You have pressed the LEFT arrow.");
-                mGameData.goLeft();
-//            invalidate();
-            }
 
+            //用户通过在游戏区域触摸来控制搬运工的行进
+            //当触摸点落在搬运工所在单元格的上、下、左、右格子n时，即意味着指示搬运工走到格子n上（阻挡问题另外考虑）
+            if (touch_left_to_man(touch_x, touch_y))
+                mGameData.goLeft();
+            if (touch_right_to_man(touch_x, touch_y))
+                mGameData.goRight();
+            if (touch_above_to_man(touch_x, touch_y))
+                mGameData.goUp();
+            if (touch_blow_to_man(touch_x, touch_y))
+                mGameData.goDown();
+
+            getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);
             invalidate();
         }
 
@@ -248,5 +212,25 @@ public class GameView extends View {
         }
 
         return true;
+    }
+
+    private boolean touch_blow_to_man(int touch_x, int touch_y) {
+        Rect belowRect = new Rect(mManRect.left, mManRect.top + (int)mRowHeight, mManRect.right, mManRect.bottom + (int)mRowHeight);
+        return belowRect.contains(touch_x, touch_y);
+    }
+
+    private boolean touch_above_to_man(int touch_x, int touch_y) {
+        Rect aboveRect = new Rect(mManRect.left, mManRect.top - (int)mRowHeight, mManRect.right, mManRect.bottom - (int)mRowHeight);
+        return aboveRect.contains(touch_x, touch_y);
+    }
+
+    private boolean touch_right_to_man(int touch_x, int touch_y) {
+        Rect rightRect = new Rect(mManRect.left + (int)mColumnWidth, mManRect.top, mManRect.right + (int)mColumnWidth, mManRect.bottom);
+        return rightRect.contains(touch_x, touch_y);
+    }
+
+    private boolean touch_left_to_man(int touch_x, int touch_y) {
+        Rect leftRect = new Rect(mManRect.left - (int)mColumnWidth, mManRect.top, mManRect.right - (int)mColumnWidth, mManRect.bottom);
+        return leftRect.contains(touch_x, touch_y);
     }
 }

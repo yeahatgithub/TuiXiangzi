@@ -20,8 +20,10 @@
         <activity
             android:name=".GameIntroActivity"
             android:label="@string/game_intro_title" />
-        <activity android:name=".XuanGuanQiaActivity"></activity>
-        <activity android:name=".GameActivity"/>
+        <activity android:name=".XuanGuanQiaActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".GameActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

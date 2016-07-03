@@ -26,3 +26,37 @@
   WWW       
             
             
+
+[3]
+6 9
+  WWWW   
+WWW  WWWW
+W     B W
+W W  WB W
+W F FWM W
+WWWWWWWWW
+
+[4]
+8 12
+   WWWWW    
+WWWW   W    
+WFFWBB W    
+W FFB  WWWWW
+W MW W W   W
+W  B     B W
+W  WWWWWWWFW
+WWWW     WWW
+
+[5]
+11 11
+   WWW     
+  WW W WWWW
+ WW  WWW  W
+WW B      W
+W   MB W  W
+WWW BWWW  W
+  W  WFF  W
+ WW WWFW WW
+ W      WW 
+ W     WW  
+ WWWWWWW   

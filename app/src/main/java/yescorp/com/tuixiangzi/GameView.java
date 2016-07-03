@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -88,6 +89,20 @@ public class GameView extends View {
         int right = (int)(left + columnWidth);
         int bottom = (int)(top + rowHeight);
         mManRect.set(left, top, right, bottom);
+    }
+
+    public void goToLevel(int level){
+        mGameLevel = level;
+        try {
+            mGameData = new GameData(getResources(), mGameLevel);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mColumnWidth = getWidth() / mGameData.getBoardColumnNum();
+        mRowHeight = getWidth() / mGameData.getBoardRowNum();   //正方形区域
+        getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);
+        invalidate();
     }
 
     @Override
@@ -174,6 +189,7 @@ public class GameView extends View {
 
         int touch_x = (int) event.getX();
         int touch_y = (int) event.getY();
+//        Log.d("onTouchEvent", "touch_x=" + touch_x + ", touch_y=" + touch_y);
         if (!mGameData.isGameOver()) {
 //        Log.d("GameView", "onTouchEvent()...touch_x=" + touch_x + ", touch_y=" + touch_y);
 
@@ -193,14 +209,17 @@ public class GameView extends View {
         }
 
         if (mBtnNextLevel.contains(touch_x, touch_y)){
+//            Log.d("onTouchEvent()", "下一关按钮被按下");
             if (mGameLevel < GameInitialData.GameLevels.size())  //mGameLevel从1开始计数
-                mGameActivity.goToNextLevel();
+//                mGameActivity.goToNextLevel();
+                goToLevel(mGameLevel + 1);
             else
-                Toast.makeText(mGameActivity, "恭喜！你已经通关了。你好厉害。", Toast.LENGTH_LONG).show();
+                Toast.makeText(mGameActivity, R.string.no_more_levels, Toast.LENGTH_LONG).show();
         }
 
         if (mBtnReset.contains(touch_x, touch_y)){
-            mGameActivity.goToLevel(mGameLevel);
+//            mGameActivity.goToLevel(mGameLevel);
+            goToLevel(mGameLevel);
         }
 
         if (mBtnExit.contains(touch_x, touch_y)){

@@ -55,10 +55,11 @@ public class GameData {
             mGameState[r].append(rightBlanks);
             //Log.d("GameData", "initializeGameState(), mGameState[" + r + "].length=" + mGameState[r].length());
             for (int c = 0; c < mColumnNum; c++) {
-                if (mGameState[r].charAt(c) == GameInitialData.MAN) {
+                if (mGameState[r].charAt(c) == GameInitialData.MAN || mGameState[r].charAt(c) == GameInitialData.MAN_FLAG) {
                     mManPostion.set(r, c);
                 }
-                if (mGameState[r].charAt(c) == GameInitialData.FLAG){
+                if (mGameState[r].charAt(c) == GameInitialData.FLAG || mGameState[r].charAt(c) == GameInitialData.MAN_FLAG
+                        || mGameState[r].charAt(c) == GameInitialData.BOX_FLAG){
                     TCell cell = new TCell(r, c);
                     mFlagCells.add(cell);
                 }
@@ -209,5 +210,9 @@ public class GameData {
                 return false;
         }
         return true;
+    }
+
+    public void recordPassed(){
+
     }
 }

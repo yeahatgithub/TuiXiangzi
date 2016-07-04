@@ -23,8 +23,10 @@ public class GameInitialData {
     public static final char NOTHING = ' ';         //该单元格啥也没有
     public static final char BOX = 'B';             //该单元格放的是箱子
     public static final char FLAG = 'F';            //红旗，表示箱子的目的地
-    public static final char MAN = 'M';              //推箱子的人
+    public static final char MAN = 'M';              //搬运工
     public static final char WALL = 'W';             //墙
+    public static final char MAN_FLAG = 'R';        //搬运工 + 红旗
+    public static final char BOX_FLAG = 'X';        //箱子 + 红旗
 
     public static final String [] LEVEL_1 = {
             "  WWWW ",
@@ -55,7 +57,8 @@ public class GameInitialData {
         GameLevels.add(new LevelInitialData(12, 12, LEVEL_2));
     }
 
-    public static final String CONFIG_FILE_NAME = "level_list.txt";
+//    public static final String CONFIG_FILE_NAME = "level_list.txt";
+    public static final String CONFIG_FILE_NAME = "test_level_list.txt";
     public static void readInitialData(Resources res, String confgFileName) throws IOException {
         try {
             InputStreamReader inputReader = new InputStreamReader(res.getAssets().open(confgFileName) );

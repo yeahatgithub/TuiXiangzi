@@ -14,9 +14,10 @@ import android.widget.TextView;
 /**
  * Created by 612226 on 2016/6/25.
  */
-public class XuanGuanQiaAdapter extends ArrayAdapter<String> {
+public class XuanGuanQiaAdapter extends ArrayAdapter<Boolean> {
     private Context mContext;
     private String[] mGuanQiaList;
+    private Boolean[] mGameLevels_PassedOrNot;  //每一个关卡都对应一个元素，若已经过关，则值为true，否则值为false
 
 //    public XuanGuanQiaAdapter(Context context, int resource) {
 //        super(context, resource);
@@ -26,15 +27,15 @@ public class XuanGuanQiaAdapter extends ArrayAdapter<String> {
 //        super(context, resource, textViewResourceId);
 //    }
 
-    public XuanGuanQiaAdapter(Context context, int resource, String[] guanQiaList) {
+    public XuanGuanQiaAdapter(Context context, int resource, Boolean[] guanQiaList) {
         super(context, resource, guanQiaList);
         mContext = context;
-        mGuanQiaList = guanQiaList;
+        mGameLevels_PassedOrNot = guanQiaList;
     }
 
     @Override
-    public String getItem(int position) {
-        return mGuanQiaList[position];
+    public Boolean getItem(int position) {
+        return mGameLevels_PassedOrNot[position];
     }
 
     @Override
@@ -50,9 +51,13 @@ public class XuanGuanQiaAdapter extends ArrayAdapter<String> {
             tvGQ = new TextView(mContext);
         else
             tvGQ = (TextView) convertView;
-        tvGQ.setText(mGuanQiaList[position]);
+        int level = position + 1;
+        tvGQ.setText("第" + level + "关");
         tvGQ.setGravity(Gravity.CENTER);
-        tvGQ.setBackgroundResource(R.drawable.gv_guanqia_item_tv_border);
+        if (mGameLevels_PassedOrNot[position])
+            tvGQ.setBackgroundResource(R.drawable.gv_passed_guanqia_item_tv_border);
+        else
+            tvGQ.setBackgroundResource(R.drawable.gv_guanqia_item_tv_border);
         tvGQ.setPadding(10, 10, 10, 10);
         tvGQ.setTextSize(18f);
         return  tvGQ;

@@ -3,11 +3,9 @@ package yescorp.com.tuixiangzi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -38,40 +36,13 @@ public class GameView extends View {
         setFocusable(true);
         setFocusableInTouchMode(true);
         Resources res = getResources();
-        loadBitmaps(res);
+        GameBitmaps.loadBitmaps(res);
         try {
             mGameData = new GameData(res, mGameLevel);
         } catch (IOException e) {
             Toast.makeText(mGameActivity, "无法打开或读取配置文件。程序退出。", Toast.LENGTH_LONG).show();
             System.exit(-1);
         }
-    }
-
-    private void loadBitmaps(Resources res) {
-        if (GameBitmaps.mBoxBitmap == null)
-            GameBitmaps.mBoxBitmap = BitmapFactory.decodeResource(res, R.drawable.box_48x48);
-        if (GameBitmaps.mManBitmap == null)
-            GameBitmaps.mManBitmap = BitmapFactory.decodeResource(res, R.drawable.eggman_48x48);
-        if (GameBitmaps.mFlagBitmap == null)
-            GameBitmaps.mFlagBitmap = BitmapFactory.decodeResource(res, R.drawable.flag_48x48);
-        if (GameBitmaps.mWallBitmap == null)
-            GameBitmaps.mWallBitmap = BitmapFactory.decodeResource(res, R.drawable.wall_48x48);
-        if (GameBitmaps.mUpBitmap == null)
-            GameBitmaps.mUpBitmap= BitmapFactory.decodeResource(res, R.drawable.up_48x48);
-        if (GameBitmaps.mDownBitmap == null)
-            GameBitmaps.mDownBitmap = BitmapFactory.decodeResource(res, R.drawable.down_48x48);
-        if (GameBitmaps.mRightBitmap == null)
-            GameBitmaps.mRightBitmap = BitmapFactory.decodeResource(res, R.drawable.right_48x48);
-        if (GameBitmaps.mLeftBitmap == null)
-            GameBitmaps.mLeftBitmap = BitmapFactory.decodeResource(res, R.drawable.left_48x48);
-        if (GameBitmaps.mDoneBitmap == null)
-            GameBitmaps.mDoneBitmap = BitmapFactory.decodeResource(res, R.drawable.done_72x72);
-        if (GameBitmaps.mBtnNextBitmap == null)
-            GameBitmaps.mBtnNextBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_next_level);
-        if (GameBitmaps.mBtnResetBitmap == null)
-            GameBitmaps.mBtnResetBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_reset);
-        if (GameBitmaps.mBtnExitBitmap == null)
-            GameBitmaps.mBtnExitBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_exit);
     }
 
     @Override
@@ -115,8 +86,10 @@ public class GameView extends View {
         drawGameBoard(canvas);
 
         //成功过关
-        if (mGameData.isGameOver())
+        if (mGameData.isGameOver()) {
             drawDoneLabel(canvas);
+            PrfsManager.setPassedLevel(mGameActivity, mGameLevel);   //记住已经通过本关卡
+        }
 
         drawButtons(canvas);
     }
@@ -128,7 +101,7 @@ public class GameView extends View {
             for (int c = 0; c < mGameData.getBoardColumnNum(); c++){
                 int topleft_x = (int)(TOP_LEFT_X + c * mColumnWidth);
                 int topleft_y = (int)(TOP_LEFT_Y + r * mRowHeight);
-                destRect.set(topleft_x, topleft_y,(int)(topleft_x + mColumnWidth), (int)(topleft_y + mRowHeight));
+                destRect.set(topleft_x, topleft_y,(int)(topleft_x + mColumnWidth) + 2, (int)(topleft_y + mRowHeight) + 2);//+2是为了去除墙体之间的缝隙
                 if (mGameData.hasFlag(r, c))
                     canvas.drawBitmap(GameBitmaps.mFlagBitmap, null, destRect, null);
                 StringBuffer []gameState = mGameData.getGameState();
@@ -145,8 +118,16 @@ public class GameView extends View {
                         canvas.drawBitmap(GameBitmaps.mManBitmap, null, destRect, null);
                         break;
                     case GameInitialData.WALL:
-                        destRect.set(destRect.left, destRect.top, destRect.right+2, destRect.bottom + 2);  //+2是为了去除墙体之间的缝隙
+//                        destRect.set(destRect.left, destRect.top, destRect.right+2, destRect.bottom + 2);  //+2是为了去除墙体之间的缝隙
                         canvas.drawBitmap(GameBitmaps.mWallBitmap, null, destRect, null);
+                        break;
+                    case GameInitialData.BOX_FLAG:
+                        canvas.drawBitmap(GameBitmaps.mFlagBitmap, null, destRect, null);
+                        canvas.drawBitmap(GameBitmaps.mBoxBitmap, null, destRect, null);
+                        break;
+                    case GameInitialData.MAN_FLAG:
+                        canvas.drawBitmap(GameBitmaps.mFlagBitmap, null, destRect, null);
+                        canvas.drawBitmap(GameBitmaps.mManBitmap, null, destRect, null);
                         break;
                 }
             }

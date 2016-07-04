@@ -1,18 +1,6 @@
 //第1关
-//游戏区是5X3规格的
-[1]
-7 7
-  WWWW 
-  WF W 
-  WB W 
-  WM W 
-  WWWW 
-       
-       
-
-//第2关
 //游戏区是12X12，边缘是空白格子
-[2]
+[1]
 12 12
             
             
@@ -27,7 +15,7 @@
             
             
 
-[3]
+[2]
 6 9
   WWWW   
 WWW  WWWW
@@ -36,7 +24,7 @@ W W  WB W
 W F FWM W
 WWWWWWWWW
 
-[4]
+[3]
 8 12
    WWWWW    
 WWWW   W    
@@ -47,7 +35,7 @@ W  B     B W
 W  WWWWWWWFW
 WWWW     WWW
 
-[5]
+[4]
 11 11
    WWW     
   WW W WWWW
@@ -60,3 +48,91 @@ WWW BWWW  W
  W      WW 
  W     WW  
  WWWWWWW   
+ 
+[5]
+11 11
+   WWWWWWWW
+   W      W
+WWWW WWWW W
+W B B FFW W
+W W  FW W W
+W W WWW W W
+W WFW B   W
+W WFBMB  WW
+W WBWWW  W 
+W  F     W 
+WWWWWWWWWW 
+
+[6]
+7 10
+WWWWWWWWWW
+W        W
+W  B B B W
+WWMWWWWW W
+W   F F FW
+W        W
+WWWWWWWWWW
+
+[7]
+8 9
+WWWWWWWWW
+W   W   W
+W B   B W
+WW W W WW
+W  W W  W
+W BFRF  W
+WWW   WWW
+  WWWWW  
+
+[8]
+8 12
+WWWWWWWWWWWW
+W          W
+W     BBB  W
+WW W  BMB  W
+WFFFWWBBBWWW
+WF F       W
+WFFF  W    W
+WWWWWWWWWWWW
+
+[9]
+8 11
+WWWWWWWWWWW
+W  FW  W  W
+WFFFF BWB W
+W  FW     W
+WWWWW  W  W
+W  B  BBB W
+W    M W  W
+WWWWWWWWWWW
+
+[10]
+7 9
+WWWWWWWWW
+W   M   W
+W  BFB  W
+WWFWBWFWW
+W  BF   W
+W   W   W
+WWWWWWWWW
+
+[11]
+7 7
+ WWWWWW
+WW FFFW
+W B B W
+W BMB W
+W B B W
+WFFF WW
+WWWWWW 
+
+[12]
+8 8
+WWWWWWWW
+W      W
+W BBB  W
+W FFFWWW
+WWWFFF W
+W MBBB W
+W      W
+WWWWWWWW

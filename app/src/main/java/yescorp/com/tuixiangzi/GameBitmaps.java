@@ -20,6 +20,7 @@ public  class GameBitmaps {
     public static  Bitmap mBtnNextBitmap;
     public static  Bitmap mBtnExitBitmap;
     public static  Bitmap mBtnResetBitmap;
+    public static Bitmap mBtnPrevBitmap;
 
     public static void loadBitmaps(Resources res) {
         if (mBoxBitmap == null)
@@ -46,5 +47,7 @@ public  class GameBitmaps {
             mBtnResetBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_reset);
         if (mBtnExitBitmap == null)
             mBtnExitBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_exit);
+        if (mBtnPrevBitmap == null)
+            mBtnPrevBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_prev_level);
     }
 }

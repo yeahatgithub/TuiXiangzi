@@ -22,12 +22,13 @@ public class GameView extends View {
     private float mRowHeight;
     private GameData mGameData;
     private int mGameLevel;
-    private int TOP_LEFT_X = 0;
-    private int TOP_LEFT_Y = 40;
+    private int mTopLeft_x = 0;
+    private int mTopLeft_y = 0;
     private Rect mManRect = new Rect();          //搬运工所在的位置
-    private Rect mBtnNextLevel = new Rect();
-    private Rect mBtnReset = new Rect();
-    private Rect mBtnExit = new Rect();
+    private Rect mRectBtnNextLevel = new Rect();
+    private Rect mRectBtnReset = new Rect();
+    private Rect mRectBtnExit = new Rect();
+    private Rect mRectBtnPrvLevel = new Rect();
 
     public GameView(Context context, int level) {
         super(context);
@@ -49,14 +50,15 @@ public class GameView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         mColumnWidth = (float)w / mGameData.getBoardColumnNum();
         mRowHeight = (float)w / mGameData.getBoardRowNum();
+        mTopLeft_y = (h - w) / 2;
         getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
 
     private void getManRect(TCell tCell, float rowHeight,float columnWidth ) {
-        int left = (int)(TOP_LEFT_X + tCell.column * columnWidth);
-        int top = (int)(TOP_LEFT_Y + tCell.row * rowHeight);
+        int left = (int)(mTopLeft_x + tCell.column * columnWidth);
+        int top = (int)(mTopLeft_y + tCell.row * rowHeight);
         int right = (int)(left + columnWidth);
         int bottom = (int)(top + rowHeight);
         mManRect.set(left, top, right, bottom);
@@ -99,8 +101,8 @@ public class GameView extends View {
         Rect destRect = new Rect();
         for (int r = 0; r < mGameData.getBoardRowNum(); r++ )
             for (int c = 0; c < mGameData.getBoardColumnNum(); c++){
-                int topleft_x = (int)(TOP_LEFT_X + c * mColumnWidth);
-                int topleft_y = (int)(TOP_LEFT_Y + r * mRowHeight);
+                int topleft_x = (int)(mTopLeft_x + c * mColumnWidth);
+                int topleft_y = (int)(mTopLeft_y + r * mRowHeight);
                 destRect.set(topleft_x, topleft_y,(int)(topleft_x + mColumnWidth) + 2, (int)(topleft_y + mRowHeight) + 2);//+2是为了去除墙体之间的缝隙
                 if (mGameData.hasFlag(r, c))
                     canvas.drawBitmap(GameBitmaps.mFlagBitmap, null, destRect, null);
@@ -134,8 +136,8 @@ public class GameView extends View {
     }
 
     private void drawDoneLabel(Canvas canvas) {
-        int begin_x = TOP_LEFT_X + 120;
-        int begin_y = TOP_LEFT_Y + 120;
+        int begin_x = mTopLeft_x + 120;
+        int begin_y = mTopLeft_y + 120;
         int end_x = canvas.getWidth() - 120;
         int end_y = begin_y + (end_x - begin_x);
         Rect label_rect = new Rect(begin_x, begin_y, end_x, end_y);
@@ -145,22 +147,26 @@ public class GameView extends View {
     }
 
     private void drawButtons(Canvas canvas) {
-        final int BOTTOM_MARGIN = 20;
-        final int LEFT_MARGIN = 106;
+        final int BOTTOM_MARGIN = canvas.getHeight() / 20;  //离屏幕底端的距离
+        final int LEFT_MARGIN = canvas.getWidth() * 2 / 5 / 5;  //分隔空间占2/5
         final int RIGHT_MARGIN = LEFT_MARGIN;
-        final int BUTTON_INTERVAL = 80;
-        final int BUTTON_WIDTH = 132;    //原始图片的像素是66x26
-        int Button_Height = BUTTON_WIDTH / GameBitmaps.mBtnNextBitmap.getWidth() * GameBitmaps.mBtnNextBitmap.getHeight();
+        final int BUTTON_INTERVAL = LEFT_MARGIN;
+        final int BUTTON_WIDTH = canvas.getWidth() * 3 / (5 * 4);    //按钮占3/5
+        int Button_Height = BUTTON_WIDTH * GameBitmaps.mBtnNextBitmap.getHeight() / GameBitmaps.mBtnNextBitmap.getWidth();
         int button_y = canvas.getHeight() - BOTTOM_MARGIN - Button_Height;
         int buttion_1_x = LEFT_MARGIN;
-        mBtnNextLevel.set(buttion_1_x, button_y, buttion_1_x + BUTTON_WIDTH, button_y + Button_Height);
-        canvas.drawBitmap(GameBitmaps.mBtnNextBitmap, null, mBtnNextLevel, null);
+        mRectBtnPrvLevel.set(buttion_1_x, button_y, buttion_1_x + BUTTON_WIDTH, button_y + Button_Height);
+        canvas.drawBitmap(GameBitmaps.mBtnPrevBitmap, null, mRectBtnPrvLevel, null);
+        mRectBtnNextLevel.set(buttion_1_x, button_y, buttion_1_x + BUTTON_WIDTH, button_y + Button_Height);
         int button_2_x = buttion_1_x + BUTTON_WIDTH + BUTTON_INTERVAL;
-        mBtnReset.set(button_2_x, button_y, button_2_x + BUTTON_WIDTH, button_y + Button_Height);
-        canvas.drawBitmap(GameBitmaps.mBtnResetBitmap, null, mBtnReset, null);
+        mRectBtnNextLevel.set(button_2_x, button_y, button_2_x + BUTTON_WIDTH, button_y + Button_Height);
+        canvas.drawBitmap(GameBitmaps.mBtnNextBitmap, null, mRectBtnNextLevel, null);
         int button_3_x = button_2_x + BUTTON_WIDTH + BUTTON_INTERVAL;
-        mBtnExit.set(button_3_x, button_y, button_3_x + BUTTON_WIDTH, button_y + Button_Height);
-        canvas.drawBitmap(GameBitmaps.mBtnExitBitmap, null, mBtnExit, null);
+        mRectBtnReset.set(button_3_x, button_y, button_3_x + BUTTON_WIDTH, button_y + Button_Height);
+        canvas.drawBitmap(GameBitmaps.mBtnResetBitmap, null, mRectBtnReset, null);
+        int button_4_x = button_3_x + BUTTON_WIDTH + BUTTON_INTERVAL;
+        mRectBtnExit.set(button_4_x, button_y, button_4_x + BUTTON_WIDTH, button_y + Button_Height);
+        canvas.drawBitmap(GameBitmaps.mBtnExitBitmap, null, mRectBtnExit, null);
     }
 
     @Override
@@ -189,7 +195,13 @@ public class GameView extends View {
             invalidate();
         }
 
-        if (mBtnNextLevel.contains(touch_x, touch_y)){
+        if (mRectBtnPrvLevel.contains(touch_x, touch_y))
+            if (mGameLevel > 1)
+                goToLevel(mGameLevel - 1);
+            else
+                Toast.makeText(mGameActivity, "已经是第1关。", Toast.LENGTH_SHORT).show();
+
+        if (mRectBtnNextLevel.contains(touch_x, touch_y)){
 //            Log.d("onTouchEvent()", "下一关按钮被按下");
             if (mGameLevel < GameInitialData.GameLevels.size())  //mGameLevel从1开始计数
 //                mGameActivity.goToNextLevel();
@@ -198,12 +210,12 @@ public class GameView extends View {
                 Toast.makeText(mGameActivity, R.string.no_more_levels, Toast.LENGTH_LONG).show();
         }
 
-        if (mBtnReset.contains(touch_x, touch_y)){
+        if (mRectBtnReset.contains(touch_x, touch_y)){
 //            mGameActivity.goToLevel(mGameLevel);
             goToLevel(mGameLevel);
         }
 
-        if (mBtnExit.contains(touch_x, touch_y)){
+        if (mRectBtnExit.contains(touch_x, touch_y)){
             Intent startMain = new Intent(Intent.ACTION_MAIN);
             startMain.addCategory(Intent.CATEGORY_HOME);
             startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

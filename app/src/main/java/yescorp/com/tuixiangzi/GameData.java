@@ -1,7 +1,6 @@
 package yescorp.com.tuixiangzi;
 
 import android.content.res.Resources;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -108,7 +107,7 @@ public class GameData {
         }
     }
 
-    private void restoreOldState(int row, int column) {
+    private void restoreInitialState(int row, int column) {
         if (hasFlag(row, column))
             mGameState[row].setCharAt(column, GameInitialData.FLAG);
         else
@@ -116,7 +115,8 @@ public class GameData {
     }
 
     private void manGoAway() {
-        restoreOldState(mManPostion.row, mManPostion.column);
+        restoreInitialState(mManPostion.row, mManPostion.column);
+        GameSound.playOneStepSound();
     }
 
     private void moveBoxUp(int row, int column) {
@@ -128,8 +128,9 @@ public class GameData {
     private void moveBox(int srcRow, int srcColumn, int destRow, int destColumn){
         char cell = mGameState[destRow].charAt(destColumn);
         if (cell  == GameInitialData.NOTHING || cell == GameInitialData.FLAG){
-            restoreOldState(srcRow, srcColumn);
+            restoreInitialState(srcRow, srcColumn);
             mGameState[destRow].setCharAt(destColumn, GameInitialData.BOX);
+            GameSound.playMoveBoxSound();
         }
     }
 

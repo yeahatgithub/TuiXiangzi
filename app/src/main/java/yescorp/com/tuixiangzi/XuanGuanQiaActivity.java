@@ -34,7 +34,6 @@ public class XuanGuanQiaActivity extends Activity {
         for (int level = 1; level <= GameInitialData.GameLevels.size(); level++)
                 mGameLevels_PassedOrNot[level - 1] = PrfsManager.getPassedLevel(this, level);
 
-        //TODO: 不应该硬编码关卡列表
         xgqAdapter = new XuanGuanQiaAdapter(this, R.layout.item_guan_qia_gridview, mGameLevels_PassedOrNot);
         GridView gv_GuanQia = (GridView) findViewById(R.id.gv_xuan_guan_qia);
         gv_GuanQia.setAdapter(xgqAdapter);

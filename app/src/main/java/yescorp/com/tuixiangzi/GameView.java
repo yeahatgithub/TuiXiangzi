@@ -36,10 +36,8 @@ public class GameView extends View {
         mGameLevel = level;
         setFocusable(true);
         setFocusableInTouchMode(true);
-        Resources res = getResources();
-        GameBitmaps.loadBitmaps(res);
         try {
-            mGameData = new GameData(res, mGameLevel);
+            mGameData = new GameData(getResources(), mGameLevel);
         } catch (IOException e) {
             Toast.makeText(mGameActivity, "无法打开或读取配置文件。程序退出。", Toast.LENGTH_LONG).show();
             System.exit(-1);
@@ -90,7 +88,6 @@ public class GameView extends View {
         //成功过关
         if (mGameData.isGameOver()) {
             drawDoneLabel(canvas);
-            PrfsManager.setPassedLevel(mGameActivity, mGameLevel);   //记住已经通过本关卡
         }
 
         drawButtons(canvas);
@@ -193,13 +190,17 @@ public class GameView extends View {
 
             getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);
             invalidate();
+            if (mGameData.isGameOver()){
+                PrfsManager.setPassedLevel(mGameActivity, mGameLevel);   //记住已经通过本关卡
+                GameSound.playGameOverSound(mGameActivity.getAssets());
+            }
         }
 
         if (mRectBtnPrvLevel.contains(touch_x, touch_y))
             if (mGameLevel > 1)
                 goToLevel(mGameLevel - 1);
             else
-                Toast.makeText(mGameActivity, "已经是第1关。", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mGameActivity, "已经到达第1关。", Toast.LENGTH_SHORT).show();
 
         if (mRectBtnNextLevel.contains(touch_x, touch_y)){
 //            Log.d("onTouchEvent()", "下一关按钮被按下");

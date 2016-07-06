@@ -12,10 +12,10 @@ public  class GameBitmaps {
     public static  Bitmap mManBitmap;
     public static  Bitmap mBoxBitmap;
     public static  Bitmap mFlagBitmap;
-    public static  Bitmap mUpBitmap;
-    public static  Bitmap mDownBitmap;
-    public static  Bitmap mRightBitmap;
-    public static  Bitmap mLeftBitmap;
+//    public static  Bitmap mUpBitmap;
+//    public static  Bitmap mDownBitmap;
+//    public static  Bitmap mRightBitmap;
+//    public static  Bitmap mLeftBitmap;
     public static  Bitmap mDoneBitmap;
     public static  Bitmap mBtnNextBitmap;
     public static  Bitmap mBtnExitBitmap;
@@ -31,14 +31,14 @@ public  class GameBitmaps {
             mFlagBitmap = BitmapFactory.decodeResource(res, R.drawable.flag_48x48);
         if (mWallBitmap == null)
             mWallBitmap = BitmapFactory.decodeResource(res, R.drawable.wall_48x48);
-        if (mUpBitmap == null)
-            mUpBitmap = BitmapFactory.decodeResource(res, R.drawable.up_48x48);
-        if (mDownBitmap == null)
-            mDownBitmap = BitmapFactory.decodeResource(res, R.drawable.down_48x48);
-        if (mRightBitmap == null)
-            mRightBitmap = BitmapFactory.decodeResource(res, R.drawable.right_48x48);
-        if (mLeftBitmap == null)
-            mLeftBitmap = BitmapFactory.decodeResource(res, R.drawable.left_48x48);
+//        if (mUpBitmap == null)
+//            mUpBitmap = BitmapFactory.decodeResource(res, R.drawable.up_48x48);
+//        if (mDownBitmap == null)
+//            mDownBitmap = BitmapFactory.decodeResource(res, R.drawable.down_48x48);
+//        if (mRightBitmap == null)
+//            mRightBitmap = BitmapFactory.decodeResource(res, R.drawable.right_48x48);
+//        if (mLeftBitmap == null)
+//            mLeftBitmap = BitmapFactory.decodeResource(res, R.drawable.left_48x48);
         if (mDoneBitmap == null)
             mDoneBitmap = BitmapFactory.decodeResource(res, R.drawable.done_72x72);
         if (mBtnNextBitmap == null)
@@ -49,5 +49,27 @@ public  class GameBitmaps {
             mBtnExitBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_exit);
         if (mBtnPrevBitmap == null)
             mBtnPrevBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_prev_level);
+    }
+
+    public static void releaseBitmaps(){
+        //game board
+        releaseBmp(mBoxBitmap);
+        releaseBmp(mManBitmap);
+        releaseBmp(mWallBitmap);
+        releaseBmp(mFlagBitmap);
+        releaseBmp(mDoneBitmap);
+        //buttons
+        releaseBmp(mBtnPrevBitmap);
+        releaseBmp(mBtnExitBitmap);
+        releaseBmp(mBtnNextBitmap);
+        releaseBmp(mBtnResetBitmap);
+
+    }
+
+    private static void releaseBmp(Bitmap bitmap) {
+        if (bitmap != null){
+            bitmap.recycle();
+            bitmap = null;
+        }
     }
 }

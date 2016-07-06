@@ -12,11 +12,9 @@ public  class GameBitmaps {
     public static  Bitmap mManBitmap;
     public static  Bitmap mBoxBitmap;
     public static  Bitmap mFlagBitmap;
-//    public static  Bitmap mUpBitmap;
-//    public static  Bitmap mDownBitmap;
-//    public static  Bitmap mRightBitmap;
-//    public static  Bitmap mLeftBitmap;
     public static  Bitmap mDoneBitmap;
+    public static  Bitmap mSoundOpenBitmap;
+    public static  Bitmap mSoundCloseBitmap;
     public static  Bitmap mBtnNextBitmap;
     public static  Bitmap mBtnExitBitmap;
     public static  Bitmap mBtnResetBitmap;
@@ -31,16 +29,12 @@ public  class GameBitmaps {
             mFlagBitmap = BitmapFactory.decodeResource(res, R.drawable.flag_48x48);
         if (mWallBitmap == null)
             mWallBitmap = BitmapFactory.decodeResource(res, R.drawable.wall_48x48);
-//        if (mUpBitmap == null)
-//            mUpBitmap = BitmapFactory.decodeResource(res, R.drawable.up_48x48);
-//        if (mDownBitmap == null)
-//            mDownBitmap = BitmapFactory.decodeResource(res, R.drawable.down_48x48);
-//        if (mRightBitmap == null)
-//            mRightBitmap = BitmapFactory.decodeResource(res, R.drawable.right_48x48);
-//        if (mLeftBitmap == null)
-//            mLeftBitmap = BitmapFactory.decodeResource(res, R.drawable.left_48x48);
         if (mDoneBitmap == null)
             mDoneBitmap = BitmapFactory.decodeResource(res, R.drawable.done_72x72);
+        if (mSoundOpenBitmap == null)
+            mSoundOpenBitmap = BitmapFactory.decodeResource(res, R.drawable.laba_open_48x48);
+        if (mSoundCloseBitmap == null)
+            mSoundCloseBitmap = BitmapFactory.decodeResource(res, R.drawable.laba_close_48x48);
         if (mBtnNextBitmap == null)
             mBtnNextBitmap = BitmapFactory.decodeResource(res, R.drawable.btn_next_level);
         if (mBtnResetBitmap == null)
@@ -58,6 +52,8 @@ public  class GameBitmaps {
         releaseBmp(mWallBitmap);
         releaseBmp(mFlagBitmap);
         releaseBmp(mDoneBitmap);
+        releaseBmp(mSoundOpenBitmap);
+        releaseBmp(mSoundCloseBitmap);
         //buttons
         releaseBmp(mBtnPrevBitmap);
         releaseBmp(mBtnExitBitmap);

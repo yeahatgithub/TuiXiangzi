@@ -15,10 +15,9 @@ import java.io.IOException;
 public class GameSound {
     private static SoundPool mSoundPool;
     private static int mOneSetpMusicId;
-//    private static SoundPool mMoveBoxSound;
     private static  int mMoveBoxMusicId;
-//    private static SoundPool mGameOverSound;
     private static int mGameOverMusicId;
+    private static  boolean mSoundAllowed = true;
 
     public static void loadSound(AssetManager assetManager) {
         try {
@@ -56,6 +55,14 @@ public class GameSound {
 
     public static void playGameOverSound(AssetManager assetManager){
         if (mSoundPool != null)
-            mSoundPool.play(mGameOverMusicId, 1.0f, 1.0f, 1, 0 ,1);  //报告"sample 3 not READY"，应该是上一步的Load操作没有完成
+            mSoundPool.play(mGameOverMusicId, 1.0f, 1.0f, 1, 0 ,1);
+    }
+
+    public static void switchSoundAllowed(){
+        mSoundAllowed = !mSoundAllowed;
+    }
+
+    public static  boolean isSoundAllowed(){
+        return mSoundAllowed;
     }
 }

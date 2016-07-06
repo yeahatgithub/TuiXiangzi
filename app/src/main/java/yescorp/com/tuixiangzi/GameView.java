@@ -2,7 +2,6 @@ package yescorp.com.tuixiangzi;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -29,6 +28,8 @@ public class GameView extends View {
     private Rect mRectBtnReset = new Rect();
     private Rect mRectBtnExit = new Rect();
     private Rect mRectBtnPrvLevel = new Rect();
+    private Rect mRectSoundSwitch = new Rect();
+//    private boolean mSoundAllowed = true;
 
     public GameView(Context context, int level) {
         super(context);
@@ -84,6 +85,8 @@ public class GameView extends View {
         canvas.drawRect(0, 0, getWidth(), getHeight(), background);
         //游戏区域
         drawGameBoard(canvas);
+        //音效开关
+        drawSoundSwitch(canvas);
 
         //成功过关
         if (mGameData.isGameOver()) {
@@ -92,7 +95,6 @@ public class GameView extends View {
 
         drawButtons(canvas);
     }
-
 
     private void drawGameBoard(Canvas canvas) {
         Rect destRect = new Rect();
@@ -130,6 +132,15 @@ public class GameView extends View {
                         break;
                 }
             }
+    }
+
+
+    private void drawSoundSwitch(Canvas canvas) {
+        mRectSoundSwitch.set(canvas.getWidth() - 2 * (int)mColumnWidth, 0, canvas.getWidth(), 2 * (int)mColumnWidth);
+        if (GameSound.isSoundAllowed())
+            canvas.drawBitmap(GameBitmaps.mSoundOpenBitmap, null, mRectSoundSwitch, null);
+        else
+            canvas.drawBitmap(GameBitmaps.mSoundCloseBitmap, null, mRectSoundSwitch, null);
     }
 
     private void drawDoneLabel(Canvas canvas) {
@@ -173,10 +184,7 @@ public class GameView extends View {
 
         int touch_x = (int) event.getX();
         int touch_y = (int) event.getY();
-//        Log.d("onTouchEvent", "touch_x=" + touch_x + ", touch_y=" + touch_y);
         if (!mGameData.isGameOver()) {
-//        Log.d("GameView", "onTouchEvent()...touch_x=" + touch_x + ", touch_y=" + touch_y);
-
             //用户通过在游戏区域触摸来控制搬运工的行进
             //当触摸点落在搬运工所在单元格的上、下、左、右格子n时，即意味着指示搬运工走到格子n上（阻挡问题另外考虑）
             if (touch_left_to_man(touch_x, touch_y))
@@ -187,15 +195,25 @@ public class GameView extends View {
                 mGameData.goUp();
             if (touch_blow_to_man(touch_x, touch_y))
                 mGameData.goDown();
-
             getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);
+            if (mRectSoundSwitch.contains(touch_x, touch_y))
+                GameSound.switchSoundAllowed();
             invalidate();
+
             if (mGameData.isGameOver()){
                 PrfsManager.setPassedLevel(mGameActivity, mGameLevel);   //记住已经通过本关卡
-                GameSound.playGameOverSound(mGameActivity.getAssets());
+                if (GameSound.isSoundAllowed()) GameSound.playGameOverSound(mGameActivity.getAssets());
             }
         }
 
+
+        pressButton(touch_x, touch_y);
+
+        return true;
+    }
+
+
+    private void pressButton(int touch_x, int touch_y) {
         if (mRectBtnPrvLevel.contains(touch_x, touch_y))
             if (mGameLevel > 1)
                 goToLevel(mGameLevel - 1);
@@ -223,8 +241,6 @@ public class GameView extends View {
             mGameActivity.startActivity(startMain);
             System.exit(0);
         }
-
-        return true;
     }
 
     private boolean touch_blow_to_man(int touch_x, int touch_y) {

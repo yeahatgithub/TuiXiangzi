@@ -116,7 +116,7 @@ public class GameData {
 
     private void manGoAway() {
         restoreInitialState(mManPostion.row, mManPostion.column);
-        GameSound.playOneStepSound();
+        if (GameSound.isSoundAllowed()) GameSound.playOneStepSound();
     }
 
     private void moveBoxUp(int row, int column) {
@@ -130,7 +130,7 @@ public class GameData {
         if (cell  == GameInitialData.NOTHING || cell == GameInitialData.FLAG){
             restoreInitialState(srcRow, srcColumn);
             mGameState[destRow].setCharAt(destColumn, GameInitialData.BOX);
-            GameSound.playMoveBoxSound();
+            if (GameSound.isSoundAllowed()) GameSound.playMoveBoxSound();
         }
     }
 

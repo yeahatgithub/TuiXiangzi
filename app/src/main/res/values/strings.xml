@@ -8,4 +8,11 @@
     <string name="xuan_guan_qia">选择关卡</string>
     <string name="game_over_label">你过关了！</string>
     <string name="no_more_levels">没有更多关卡了。</string>
+    <string name="back_to_main_screen">返回主屏幕</string>
+    <string name="xgq_exit">退出游戏</string>
+    <string name="prv_level_label">上一关</string>
+    <string name="next_level_label">下一关</string>
+    <string name="reset_label">重玩</string>
+    <string name="undo_prv_step">回退一步</string>
+    <string name="already_first_level">已经到达第1关。</string>
 </resources>

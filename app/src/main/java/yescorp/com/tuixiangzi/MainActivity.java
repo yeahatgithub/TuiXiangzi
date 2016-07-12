@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -46,5 +48,29 @@ public class MainActivity extends Activity {
         public void onClick(View view) {
             finish();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_act, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.itm_start:
+                Intent xgq = new Intent(MainActivity.this, XuanGuanQiaActivity.class);
+                startActivity(xgq);
+                break;
+            case R.id.itm_intro:
+                Intent i = new Intent(MainActivity.this, GameIntroActivity.class);
+                startActivity(i);
+                break;
+            case R.id.itm_exit:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

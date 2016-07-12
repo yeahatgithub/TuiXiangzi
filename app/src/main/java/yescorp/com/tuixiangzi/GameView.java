@@ -63,7 +63,7 @@ public class GameView extends View {
         mManRect.set(left, top, right, bottom);
     }
 
-    public void goToLevel(int level){
+    private void goToLevel(int level){
         mGameLevel = level;
         try {
             mGameData = new GameData(getResources(), mGameLevel);
@@ -75,6 +75,24 @@ public class GameView extends View {
         mRowHeight = getWidth() / mGameData.getBoardRowNum();   //正方形区域
         getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);
         invalidate();
+    }
+
+    public void resetGame(){
+        goToLevel(mGameLevel);
+    }
+
+    public void gotoNextLevel() {
+        if (mGameLevel < GameInitialData.GameLevels.size())  //mGameLevel从1开始计数
+            goToLevel(mGameLevel + 1);
+        else
+            Toast.makeText(mGameActivity, R.string.no_more_levels, Toast.LENGTH_LONG).show();
+    }
+
+    public void gotoPrvLevel(){
+        if (mGameLevel > 1)
+            goToLevel(mGameLevel - 1);
+        else
+            Toast.makeText(mGameActivity, R.string.already_first_level, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -95,6 +113,7 @@ public class GameView extends View {
 
         drawButtons(canvas);
     }
+
 
     private void drawGameBoard(Canvas canvas) {
         Rect destRect = new Rect();
@@ -133,7 +152,6 @@ public class GameView extends View {
                 }
             }
     }
-
 
     private void drawSoundSwitch(Canvas canvas) {
         mRectSoundSwitch.set(canvas.getWidth() - 2 * (int)mColumnWidth, 0, canvas.getWidth(), 2 * (int)mColumnWidth);
@@ -177,6 +195,7 @@ public class GameView extends View {
         canvas.drawBitmap(GameBitmaps.mBtnExitBitmap, null, mRectBtnExit, null);
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() != MotionEvent.ACTION_DOWN)
@@ -211,26 +230,15 @@ public class GameView extends View {
 
         return true;
     }
-
-
     private void pressButton(int touch_x, int touch_y) {
         if (mRectBtnPrvLevel.contains(touch_x, touch_y))
-            if (mGameLevel > 1)
-                goToLevel(mGameLevel - 1);
-            else
-                Toast.makeText(mGameActivity, "已经到达第1关。", Toast.LENGTH_SHORT).show();
+            gotoPrvLevel();
 
         if (mRectBtnNextLevel.contains(touch_x, touch_y)){
-//            Log.d("onTouchEvent()", "下一关按钮被按下");
-            if (mGameLevel < GameInitialData.GameLevels.size())  //mGameLevel从1开始计数
-//                mGameActivity.goToNextLevel();
-                goToLevel(mGameLevel + 1);
-            else
-                Toast.makeText(mGameActivity, R.string.no_more_levels, Toast.LENGTH_LONG).show();
+            gotoNextLevel();
         }
 
         if (mRectBtnReset.contains(touch_x, touch_y)){
-//            mGameActivity.goToLevel(mGameLevel);
             goToLevel(mGameLevel);
         }
 
@@ -242,6 +250,7 @@ public class GameView extends View {
             System.exit(0);
         }
     }
+
 
     private boolean touch_blow_to_man(int touch_x, int touch_y) {
         Rect belowRect = new Rect(mManRect.left, mManRect.top + (int)mRowHeight, mManRect.right, mManRect.bottom + (int)mRowHeight);

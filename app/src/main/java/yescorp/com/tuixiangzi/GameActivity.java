@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.lang.reflect.GenericArrayType;
 
@@ -35,5 +37,36 @@ public class GameActivity extends Activity {
         super.onSaveInstanceState(outState);
         GameBitmaps.releaseBitmaps();               //释放图片占用的内存
         GameSound.releaseSound();                   //释放音效占用的内存
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_game_act, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.itm_prv_level:
+                mView.gotoPrvLevel();
+                break;
+            case R.id.itm_next_level:
+                mView.gotoNextLevel();
+                break;
+            case R.id.itm_reset_game:
+                mView.resetGame();
+                break;
+            case R.id.itm_undo_label:
+                break;
+            case R.id.itm_game_exit:
+                Intent startMain = new Intent(Intent.ACTION_MAIN);
+                startMain.addCategory(Intent.CATEGORY_HOME);
+                startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(startMain);
+                System.exit(0);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

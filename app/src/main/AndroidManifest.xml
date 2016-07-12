@@ -10,7 +10,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,8 +22,10 @@
             android:name=".GameIntroActivity"
             android:label="@string/game_intro_title" />
         <activity android:name=".XuanGuanQiaActivity"
+            android:theme="@android:style/Theme.Holo"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".GameActivity"
+            android:theme="@android:style/Theme.Holo"
             android:screenOrientation="portrait"/>
     </application>
 

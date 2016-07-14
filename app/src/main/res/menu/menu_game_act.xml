@@ -14,11 +14,16 @@
         app:showAsAction="never"
         android:title="@string/reset_label"/>
     <item android:id="@+id/itm_undo_label"
+        android:icon="@mipmap/undo"
         android:orderInCategory="104"
-        app:showAsAction="never"
+        app:showAsAction="ifRoom"
         android:title="@string/undo_prv_step"/>
-    <item android:id="@+id/itm_game_exit"
+    <item android:id="@+id/itm_change_level"
         android:orderInCategory="105"
+        app:showAsAction="never"
+        android:title="@string/change_game_level"/>
+    <item android:id="@+id/itm_game_exit"
+        android:orderInCategory="106"
         app:showAsAction="never"
         android:title="@string/tuichu_youxi" />
 </menu>

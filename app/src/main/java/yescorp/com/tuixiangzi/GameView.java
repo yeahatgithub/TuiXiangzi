@@ -271,4 +271,9 @@ public class GameView extends View {
         Rect leftRect = new Rect(mManRect.left - (int)mColumnWidth, mManRect.top, mManRect.right - (int)mColumnWidth, mManRect.bottom);
         return leftRect.contains(touch_x, touch_y);
     }
+
+    public void undoMove(){
+        mGameData.undoMove();
+        invalidate();
+    }
 }

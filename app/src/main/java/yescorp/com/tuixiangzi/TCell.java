@@ -23,4 +23,7 @@ public class TCell {
         column = c;
     }
 
+    public boolean isEqualTo(TCell cell){
+        return row == cell.row && column == cell.column;
+    }
 }

@@ -1,6 +1,7 @@
 package yescorp.com.tuixiangzi;
 
 import android.content.res.Resources;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ public class GameData {
     private TCell mManPostion = new TCell();
     private LevelInitialData mSelectedInitialData;    //当前所选的关卡的初始数据，与mSelectedLevel对应
     private List<TCell> mFlagCells = new ArrayList<>();             //记住所有红旗所在的位置
+    private List<GameStepData> mGameSteps = new ArrayList<>();      //记住人走过的每一步（及其箱子的每一次移动）。用以支持“悔一步”操作
+    private GameStepData mCurrentStep;
 
     public GameData(Resources res, int level) throws IOException {
         if (GameInitialData.GameLevels.size() == 0)
@@ -94,6 +97,7 @@ public class GameData {
 
     public void goUp() {
         if (mManPostion.row <= 0) return;
+        mCurrentStep = null;
         char upCell = mGameState[mManPostion.row - 1].charAt(mManPostion.column);
         if (upCell == GameInitialData.BOX) {
             moveBoxUp(mManPostion.row - 1, mManPostion.column);
@@ -104,8 +108,21 @@ public class GameData {
             manGoAway();
             mManPostion.row--;
             mGameState[mManPostion.row].setCharAt(mManPostion.column, GameInitialData.MAN);
+
+            recordMoveInfo(mManPostion.row + 1, mManPostion.column, mManPostion.row, mManPostion.column);
         }
     }
+
+    private void recordMoveInfo(int srcRow, int srcColumn, int destRow, int destColumn) {
+        if (mCurrentStep == null)
+            mCurrentStep = new GameStepData();
+        mCurrentStep.setManPrvPosition(new TCell(srcRow, srcColumn));
+        mCurrentStep.setManCurrentPosition(new TCell(destRow, destColumn));
+        mGameSteps.add(mCurrentStep);
+        logOneStep(mCurrentStep);
+    }
+
+
 
     private void restoreInitialState(int row, int column) {
         if (hasFlag(row, column))
@@ -130,12 +147,17 @@ public class GameData {
         if (cell  == GameInitialData.NOTHING || cell == GameInitialData.FLAG){
             restoreInitialState(srcRow, srcColumn);
             mGameState[destRow].setCharAt(destColumn, GameInitialData.BOX);
+            if (mCurrentStep == null)
+                mCurrentStep = new GameStepData();
+            mCurrentStep.setBoxPrvPosition(new TCell(srcRow, srcColumn));
+            mCurrentStep.setBoxCurrentPosition(new TCell(destRow, destColumn));
             if (GameSound.isSoundAllowed()) GameSound.playMoveBoxSound();
         }
     }
 
     public void goDown() {
         if (mManPostion.row >= mRowNum - 1) return;
+        mCurrentStep = null;
         char downCell = mGameState[mManPostion.row + 1].charAt(mManPostion.column);
         if (downCell == GameInitialData.BOX) {
             moveBoxDown(mManPostion.row + 1, mManPostion.column);
@@ -145,16 +167,17 @@ public class GameData {
             manGoAway();
             mManPostion.row++;
             mGameState[mManPostion.row].setCharAt(mManPostion.column, GameInitialData.MAN);
+
+            recordMoveInfo(mManPostion.row - 1, mManPostion.column, mManPostion.row, mManPostion.column);
         }
     }
 
-    private void moveBoxDown(int row, int column) {
-        if (row >= mRowNum - 1) return;
-        moveBox(row, column, row + 1, column);
-    }
-
+    //TODO: goDown(), goRight(), goLeft(), goUp()的函数代码类似，抽取类似代码，做成一个子函数。在子函数内部，记录人和箱子的移动信息。
+    // 上述做法的目的是，去除mCurrentSetp这个“全局变量”。原因是好多地方都读/写了这个变量，代码变得难以维护。
+    //TODO: moveBoxDown(), moveBoxUp(), moveBoxLeft(), moveBoxRight()返回真假值，真值代表移动了箱子；假值代表没有移动箱子
     public void goRight() {
         if (mManPostion.column >= mColumnNum - 1) return;
+        mCurrentStep = null;
         char rightCell = mGameState[mManPostion.row].charAt(mManPostion.column + 1);
         if (rightCell == GameInitialData.BOX) {
             moveBoxRight(mManPostion.row, mManPostion.column + 1);
@@ -165,7 +188,14 @@ public class GameData {
             manGoAway();
             mManPostion.column++;
             mGameState[mManPostion.row].setCharAt(mManPostion.column, GameInitialData.MAN);
+
+            recordMoveInfo(mManPostion.row, mManPostion.column - 1, mManPostion.row, mManPostion.column);
         }
+    }
+
+    private void moveBoxDown(int row, int column) {
+        if (row >= mRowNum - 1) return;
+        moveBox(row, column, row + 1, column);
     }
 
     private void moveBoxRight(int row, int column) {
@@ -175,6 +205,7 @@ public class GameData {
 
     public void goLeft() {
         if (mManPostion.column <= 0) return;
+        mCurrentStep = null;
         char leftCell = mGameState[mManPostion.row].charAt(mManPostion.column - 1);
         if (leftCell == GameInitialData.BOX) {
             moveBoxLeft(mManPostion.row, mManPostion.column - 1);
@@ -184,6 +215,8 @@ public class GameData {
             manGoAway();
             mManPostion.column--;
             mGameState[mManPostion.row].setCharAt(mManPostion.column, GameInitialData.MAN);
+
+            recordMoveInfo(mManPostion.row, mManPostion.column + 1, mManPostion.row, mManPostion.column);
         }
     }
 
@@ -213,7 +246,47 @@ public class GameData {
         return true;
     }
 
-    public void recordPassed(){
+    //TODO: 悔一步
+    //    走第一步后，悔一步，执行成功。
+    //    连续走多步，悔一步后出错了。
+    public boolean undoMove(){
+        if (mGameSteps.isEmpty())
+            return false;
+//        GameStepData step = mGameSteps.remove(0);
+        GameStepData step = mGameSteps.remove(mGameSteps.size() - 1);
+        logUndoOneStep(step);
+        assert(mManPostion.isEqualTo(step.getManCurrentPosition()));
+        restoreInitialState(step.getManCurrentPosition().row, step.getManCurrentPosition().column);
+        int manRow = step.getManPrvPosition().row;
+        int manColumn = step.getManPrvPosition().column;
+        mManPostion.set(manRow, manColumn);
+        mGameState[manRow].setCharAt(manColumn, 'M');
+        TCell boxPrvPos = step.getBoxPrvPosition();
+        TCell boxCurPos = step.getBoxCurrentPosition();
+        if (boxPrvPos != null && boxCurPos != null){
+            //assert mGameState[boxCurPos.row].charAt(boxCurPos.column) == 'B';
+            restoreInitialState(boxCurPos.row, boxCurPos.column);
+            mGameState[boxPrvPos.row].setCharAt(boxPrvPos.column, 'B');
+        }
+        return true;
+    }
 
+    private void logUndoOneStep(GameStepData step) {
+        logOneSetp(step.getManCurrentPosition(), step.getManPrvPosition(), step.getBoxCurrentPosition(), step.getBoxPrvPosition());
+    }
+
+    private void logOneStep(GameStepData step) {
+        TCell manPrvPos = step.getManPrvPosition();
+        TCell manCurPos = step.getManCurrentPosition();
+        TCell boxPrvPos = step.getBoxPrvPosition();
+        TCell boxCurPos = step.getBoxCurrentPosition();
+        logOneSetp(manPrvPos, manCurPos, boxPrvPos, boxCurPos);
+    }
+
+    private void logOneSetp(TCell manPrvPos, TCell manCurPos, TCell boxPrvPos, TCell boxCurPos) {
+        Log.d("GameData", "一步：(" + manPrvPos.row + ", " + manPrvPos.column + ") -> (" + manCurPos.row + ", " + manCurPos.column + ")" );
+        if (boxPrvPos != null && boxCurPos != null) {
+            Log.d("GameData", "箱子：(" + boxPrvPos.row + ", " + boxPrvPos.column + ") -> (" + boxCurPos.row + ", " + boxCurPos.column + ")" );
+        }
     }
 }

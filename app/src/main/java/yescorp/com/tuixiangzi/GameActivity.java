@@ -58,6 +58,10 @@ public class GameActivity extends Activity {
                 mView.resetGame();
                 break;
             case R.id.itm_undo_label:
+                mView.undoMove();
+                break;
+            case R.id.itm_change_level:
+                finish();
                 break;
             case R.id.itm_game_exit:
                 Intent startMain = new Intent(Intent.ACTION_MAIN);

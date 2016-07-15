@@ -214,7 +214,7 @@ public class GameView extends View {
                 mGameData.goUp();
             if (touch_blow_to_man(touch_x, touch_y))
                 mGameData.goDown();
-            getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);
+            getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);  //重新计算搬运工的屏幕位置
             if (mRectSoundSwitch.contains(touch_x, touch_y))
                 GameSound.switchSoundAllowed();
             invalidate();
@@ -273,7 +273,9 @@ public class GameView extends View {
     }
 
     public void undoMove(){
-        mGameData.undoMove();
-        invalidate();
+        if (mGameData.undoMove()) {
+            invalidate();
+            getManRect(mGameData.getmManPostion(), mRowHeight, mColumnWidth);  //重新计算搬运工的位置
+        }
     }
 }

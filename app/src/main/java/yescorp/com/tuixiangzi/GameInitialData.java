@@ -57,8 +57,8 @@ public class GameInitialData {
         GameLevels.add(new LevelInitialData(12, 12, LEVEL_2));
     }
 
-//    public static final String CONFIG_FILE_NAME = "level_list.txt";
-    public static final String CONFIG_FILE_NAME = "test_level_list.txt";
+    public static final String CONFIG_FILE_NAME = "level_list.txt";
+//    public static final String CONFIG_FILE_NAME = "test_level_list.txt";
     public static void readInitialData(Resources res, String confgFileName) throws IOException {
         try {
             InputStreamReader inputReader = new InputStreamReader(res.getAssets().open(confgFileName) );

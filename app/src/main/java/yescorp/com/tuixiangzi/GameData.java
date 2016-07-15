@@ -20,7 +20,6 @@ public class GameData {
     private LevelInitialData mSelectedInitialData;    //当前所选的关卡的初始数据，与mSelectedLevel对应
     private List<TCell> mFlagCells = new ArrayList<>();             //记住所有红旗所在的位置
     private List<GameStepData> mGameSteps = new ArrayList<>();      //记住人走过的每一步（及其箱子的每一次移动）。用以支持“悔一步”操作
-//    private GameStepData mCurrentStep;
 
     public GameData(Resources res, int level) throws IOException {
         if (GameInitialData.GameLevels.size() == 0)
@@ -127,9 +126,6 @@ public class GameData {
         go(mManPostion.row, mManPostion.column, mManPostion.row + 1, mManPostion.column);
     }
 
-    //TODO: goDown(), goRight(), goLeft(), goUp()的函数代码类似，抽取类似代码，做成一个子函数。在子函数内部，记录人和箱子的移动信息。
-    // 上述做法的目的是，去除mCurrentSetp这个“全局变量”。原因是好多地方都读/写了这个变量，代码变得难以维护。
-    //TODO: moveBoxDown(), moveBoxUp(), moveBoxLeft(), moveBoxRight()返回真假值，真值代表移动了箱子；假值代表没有移动箱子
     public void goRight() {
         go(mManPostion.row, mManPostion.column, mManPostion.row, mManPostion.column + 1);
     }
@@ -149,7 +145,7 @@ public class GameData {
             stepData.setBoxCurrentPosition(new TCell(destRow + rowOffset, destColumn + columnOffset));
         }
         mGameSteps.add(stepData);
-        logOneStep(stepData);
+//        logOneStep(stepData);
     }
 
     private void restoreInitialState(int row, int column) {
@@ -164,11 +160,6 @@ public class GameData {
         if (GameSound.isSoundAllowed()) GameSound.playOneStepSound();
     }
 
-//    private void moveBoxUp(int row, int column) {
-//        if (row <= 0) return;
-//        moveBox(row, column, row - 1, column);
-//    }
-
     //把箱子从(srcRow, srcColumn)移动到(destRow, destColumn)
     private boolean moveBox(int srcRow, int srcColumn, int destRow, int destColumn){
         if (destRow < 0 || destRow >= mRowNum || destColumn < 0 || destColumn >= mColumnNum)
@@ -177,30 +168,11 @@ public class GameData {
         if (cell  == GameInitialData.NOTHING || cell == GameInitialData.FLAG){
             restoreInitialState(srcRow, srcColumn);
             mGameState[destRow].setCharAt(destColumn, GameInitialData.BOX);
-//            if (mCurrentStep == null)
-//                mCurrentStep = new GameStepData();
-//            mCurrentStep.setBoxPrvPosition(new TCell(srcRow, srcColumn));
-//            mCurrentStep.setBoxCurrentPosition(new TCell(destRow, destColumn));
             if (GameSound.isSoundAllowed()) GameSound.playMoveBoxSound();
             return true;
         }
         return false;
     }
-
-//    private void moveBoxDown(int row, int column) {
-//        if (row >= mRowNum - 1) return;
-//        moveBox(row, column, row + 1, column);
-//    }
-//
-//    private void moveBoxRight(int row, int column) {
-//        if (column >= mColumnNum - 1) return;
-//        moveBox(row, column, row, column + 1);
-//    }
-//
-//    private void moveBoxLeft(int row, int column) {
-//        if (column <= 0) return;
-//        moveBox(row, column, row, column - 1);
-//    }
 
     //据所选关卡的初始数据处获取单元格(row, column)是否有红旗
     public boolean hasFlag(int row, int column) {
@@ -223,13 +195,9 @@ public class GameData {
         return true;
     }
 
-    //TODO: 悔一步
-    //    走第一步后，悔一步，执行成功。
-    //    连续走多步，悔一步后出错了。
     public boolean undoMove(){
         if (mGameSteps.isEmpty())
             return false;
-//        GameStepData step = mGameSteps.remove(0);
         GameStepData step = mGameSteps.remove(mGameSteps.size() - 1);
 //        logUndoOneStep(step);
         assert(mManPostion.isEqualTo(step.getManCurrentPosition()));
@@ -249,7 +217,7 @@ public class GameData {
     }
 
     private void logUndoOneStep(GameStepData step) {
-        logOneSetp(step.getManCurrentPosition(), step.getManPrvPosition(), step.getBoxCurrentPosition(), step.getBoxPrvPosition());
+        logOneStep(step.getManCurrentPosition(), step.getManPrvPosition(), step.getBoxCurrentPosition(), step.getBoxPrvPosition());
     }
 
     private void logOneStep(GameStepData step) {
@@ -257,10 +225,10 @@ public class GameData {
         TCell manCurPos = step.getManCurrentPosition();
         TCell boxPrvPos = step.getBoxPrvPosition();
         TCell boxCurPos = step.getBoxCurrentPosition();
-//        logOneSetp(manPrvPos, manCurPos, boxPrvPos, boxCurPos);
+        logOneStep(manPrvPos, manCurPos, boxPrvPos, boxCurPos);
     }
 
-    private void logOneSetp(TCell manPrvPos, TCell manCurPos, TCell boxPrvPos, TCell boxCurPos) {
+    private void logOneStep(TCell manPrvPos, TCell manCurPos, TCell boxPrvPos, TCell boxCurPos) {
         Log.d("GameData", "一步：(" + manPrvPos.row + ", " + manPrvPos.column + ") -> (" + manCurPos.row + ", " + manCurPos.column + ")" );
         if (boxPrvPos != null && boxCurPos != null) {
             Log.d("GameData", "箱子：(" + boxPrvPos.row + ", " + boxPrvPos.column + ") -> (" + boxCurPos.row + ", " + boxCurPos.column + ")" );

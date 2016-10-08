@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -31,10 +32,14 @@ public class GameView extends View {
     private Rect mRectSoundSwitch = new Rect();
 //    private boolean mSoundAllowed = true;
 
-    public GameView(Context context, int level) {
+    public GameView(Context context) {
         super(context);
-        mGameActivity = (GameActivity) context;
-        mGameLevel = level;
+        init((GameActivity) context);
+    }
+
+    private void init(GameActivity context) {
+        mGameActivity = context;
+        mGameLevel = mGameActivity.getGameLevel();
         setFocusable(true);
         setFocusableInTouchMode(true);
         try {
@@ -43,6 +48,11 @@ public class GameView extends View {
             Toast.makeText(mGameActivity, "无法打开或读取配置文件。程序退出。", Toast.LENGTH_LONG).show();
             System.exit(-1);
         }
+    }
+
+    public GameView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init((GameActivity)context);
     }
 
     @Override

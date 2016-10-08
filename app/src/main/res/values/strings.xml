@@ -16,4 +16,8 @@
     <string name="undo_prv_step">悔一步</string>
     <string name="change_game_level">换关卡</string>
     <string name="already_first_level">已经到达第1关。</string>
+    <string name="label_prev_level">上一关</string>
+    <string name="label_next_level">下一关</string>
+    <string name="label_reset_game">重新玩</string>
+    <string name="label_exit_app">退出</string>
 </resources>

@@ -24,10 +24,10 @@ public class GameView extends View {
     private int mTopLeft_x = 0;
     private int mTopLeft_y = 0;
     private Rect mManRect = new Rect();          //搬运工所在的位置
-    private Rect mRectBtnNextLevel = new Rect();
-    private Rect mRectBtnReset = new Rect();
-    private Rect mRectBtnExit = new Rect();
-    private Rect mRectBtnPrvLevel = new Rect();
+//    private Rect mRectBtnNextLevel = new Rect();
+//    private Rect mRectBtnReset = new Rect();
+//    private Rect mRectBtnExit = new Rect();
+//    private Rect mRectBtnPrvLevel = new Rect();
     private Rect mRectSoundSwitch = new Rect();
 //    private boolean mSoundAllowed = true;
 
@@ -111,7 +111,7 @@ public class GameView extends View {
             drawDoneLabel(canvas);
         }
 
-        drawButtons(canvas);
+        //drawButtons(canvas);
     }
 
 
@@ -172,6 +172,7 @@ public class GameView extends View {
         canvas.drawBitmap(GameBitmaps.mDoneBitmap, null, label_rect, paint);
     }
 
+/*
     private void drawButtons(Canvas canvas) {
         final int BOTTOM_MARGIN = canvas.getHeight() / 20;  //离屏幕底端的距离
         final int LEFT_MARGIN = canvas.getWidth() * 2 / 5 / 5;  //分隔空间占2/5
@@ -194,6 +195,7 @@ public class GameView extends View {
         mRectBtnExit.set(button_4_x, button_y, button_4_x + BUTTON_WIDTH, button_y + Button_Height);
         canvas.drawBitmap(GameBitmaps.mBtnExitBitmap, null, mRectBtnExit, null);
     }
+*/
 
 
     @Override
@@ -226,11 +228,11 @@ public class GameView extends View {
         }
 
 
-        pressButton(touch_x, touch_y);
+        //pressButton(touch_x, touch_y);
 
         return true;
     }
-    private void pressButton(int touch_x, int touch_y) {
+/*    private void pressButton(int touch_x, int touch_y) {
         if (mRectBtnPrvLevel.contains(touch_x, touch_y))
             gotoPrvLevel();
 
@@ -249,7 +251,7 @@ public class GameView extends View {
             mGameActivity.startActivity(startMain);
             System.exit(0);
         }
-    }
+    }*/
 
 
     private boolean touch_blow_to_man(int touch_x, int touch_y) {

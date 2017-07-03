@@ -50,6 +50,7 @@ public class GameView extends View {
         }
     }
 
+    //为使用布局文件而设置的构造函数
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init((GameActivity)context);
